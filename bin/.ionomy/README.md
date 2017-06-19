@@ -34,7 +34,7 @@
 
 
 #### [🐼 Download Blockchain Data 🐼]
-Block Height [176500](https://chainz.cryptoid.info/ion/block.dws?e51d463e2fa39af6d57f54a9691507025163ec777d6ea9f3053b216876763398.htm) - [Download](https://raw.githubusercontent.com/cevap/ion/midas-algo/bin/blockchain-176500/.ionomy.tar.gz)
+Block Height [176500](https://chainz.cryptoid.info/ion/block.dws?e51d463e2fa39af6d57f54a9691507025163ec777d6ea9f3053b216876763398.htm) - [Download .ionomy.tar.gz](http://fwf.wf/d/373)
 
 
 #### 🐼 Installation instruction 🐼
