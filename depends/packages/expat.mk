@@ -1,4 +1,3 @@
-#https://github.com/cevap/ion/blob/master/depends/packages/expat.mk
 package=expat
 $(package)_version=2.2.1
 $(package)_download_path=https://downloads.sourceforge.net/project/expat/expat/$($(package)_version)
