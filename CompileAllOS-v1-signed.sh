@@ -15,13 +15,13 @@ cd ..;
 ./autogen.sh;
 ./configure --prefix=`pwd`/depends/x86_64-pc-linux-gnu
 make
-mkdir -p build/v2.1.6.2/x86_64-pc-linux-gnu;
-cp ./src/iond ./build/v2.1.6.2/x86_64-pc-linux-gnu/iond;
-cp ./src/qt/ion-qt ./build/v2.1.6.2/x86_64-pc-linux-gnu/ion-qt;
-strip ./build/v2.1.6.2/x86_64-pc-linux-gnu/iond
-strip ./build/v2.1.6.2/x86_64-pc-linux-gnu/ion-qt
+mkdir -p build/v2.1.6.3/x86_64-pc-linux-gnu;
+cp ./src/iond ./build/v2.1.6.3/x86_64-pc-linux-gnu/iond;
+cp ./src/qt/ion-qt ./build/v2.1.6.3/x86_64-pc-linux-gnu/ion-qt;
+strip ./build/v2.1.6.3/x86_64-pc-linux-gnu/iond
+strip ./build/v2.1.6.3/x86_64-pc-linux-gnu/ion-qt
 ## created detached signatures
-cd build/v2.1.6.2/x86_64-pc-linux-gnu;
+cd build/v2.1.6.3/x86_64-pc-linux-gnu;
 
 gpg --detach-sign -o ion-qt.sig ion-qt
 gpg --verify ion-qt.sig
@@ -36,13 +36,13 @@ make clean;cd src;make clean;cd ..;
 ./autogen.sh;
 ./configure --prefix=`pwd`/depends/i686-pc-linux-gnu
 make
-mkdir -p build/v2.1.6.2/i686-pc-linux-gnu;
-cp ./src/iond ./build/v2.1.6.2/i686-pc-linux-gnu/iond;
-cp ./src/qt/ion-qt ./build/v2.1.6.2/i686-pc-linux-gnu/ion-qt;
-strip ./build/v2.1.6.2/i686-pc-linux-gnu/iond
-strip ./build/v2.1.6.2/i686-pc-linux-gnu/ion-qt
+mkdir -p build/v2.1.6.3/i686-pc-linux-gnu;
+cp ./src/iond ./build/v2.1.6.3/i686-pc-linux-gnu/iond;
+cp ./src/qt/ion-qt ./build/v2.1.6.3/i686-pc-linux-gnu/ion-qt;
+strip ./build/v2.1.6.3/i686-pc-linux-gnu/iond
+strip ./build/v2.1.6.3/i686-pc-linux-gnu/ion-qt
 # created detached signatures
-cd build/v2.1.6.2/i686-pc-linux-gnu;
+cd build/v2.1.6.3/i686-pc-linux-gnu;
 
 gpg --detach-sign -o ion-qt.sig ion-qt
 gpg --verify ion-qt.sig
@@ -58,13 +58,13 @@ make clean;cd src;make clean;cd ..;
 ./configure --prefix=`pwd`/depends/x86_64-w64-mingw32
 make HOST=x86_64-w64-mingw32 -j4;
 
-mkdir -p build/v2.1.6.2/x86_64-w64-mingw32;
-cp ./src/iond.exe ./build/v2.1.6.2/x86_64-w64-mingw32/iond.exe;
-cp ./src/qt/ion-qt.exe ./build/v2.1.6.2/x86_64-w64-mingw32/ion-qt.exe;
-strip ./build/v2.1.6.2/x86_64-w64-mingw32/iond.exe
-strip ./build/v2.1.6.2/x86_64-w64-mingw32/ion-qt.exe
+mkdir -p build/v2.1.6.3/x86_64-w64-mingw32;
+cp ./src/iond.exe ./build/v2.1.6.3/x86_64-w64-mingw32/iond.exe;
+cp ./src/qt/ion-qt.exe ./build/v2.1.6.3/x86_64-w64-mingw32/ion-qt.exe;
+strip ./build/v2.1.6.3/x86_64-w64-mingw32/iond.exe
+strip ./build/v2.1.6.3/x86_64-w64-mingw32/ion-qt.exe
 ## created detached signatures
-cd build/v2.1.6.2/x86_64-w64-mingw32;
+cd build/v2.1.6.3/x86_64-w64-mingw32;
 
 
 ##/C= 	Country 	GB
@@ -98,13 +98,13 @@ make clean;cd src;make clean;cd ..;
 ./configure --prefix=`pwd`/depends/i686-w64-mingw32
 make HOST=i686-w64-mingw32 -j4;
 
-mkdir -p build/v2.1.6.2/i686-w64-mingw32;
-cp ./src/iond.exe ./build/v2.1.6.2/i686-w64-mingw32/iond.exe;
-cp ./src/qt/ion-qt.exe ./build/v2.1.6.2/i686-w64-mingw32/ion-qt.exe;
-strip ./build/v2.1.6.2/i686-w64-mingw32/iond.exe
-strip ./build/v2.1.6.2/i686-w64-mingw32/ion-qt.exe
+mkdir -p build/v2.1.6.3/i686-w64-mingw32;
+cp ./src/iond.exe ./build/v2.1.6.3/i686-w64-mingw32/iond.exe;
+cp ./src/qt/ion-qt.exe ./build/v2.1.6.3/i686-w64-mingw32/ion-qt.exe;
+strip ./build/v2.1.6.3/i686-w64-mingw32/iond.exe
+strip ./build/v2.1.6.3/i686-w64-mingw32/ion-qt.exe
 ## created detached signatures
-cd build/v2.1.6.2/i686-w64-mingw32;
+cd build/v2.1.6.3/i686-w64-mingw32;
 
 ##/C= 	Country 	GB
 ##/ST= 	State 	London
@@ -136,13 +136,13 @@ make clean;cd src;make clean;cd ..;
 ./configure --prefix=`pwd`/depends/arm-linux-gnueabihf
 make HOST=arm-linux-gnueabihf;
 
-mkdir -p build/v2.1.6.2/arm-linux-gnueabihf;
-cp ./src/iond ./build/v2.1.6.2/arm-linux-gnueabihf/iond;
-cp ./src/qt/ion-qt ./build/v2.1.6.2/arm-linux-gnueabihf/ion-qt;
-strip ./build/v2.1.6.2/arm-linux-gnueabihf/iond
-strip ./build/v2.1.6.2/arm-linux-gnueabihf/ion-qt
+mkdir -p build/v2.1.6.3/arm-linux-gnueabihf;
+cp ./src/iond ./build/v2.1.6.3/arm-linux-gnueabihf/iond;
+cp ./src/qt/ion-qt ./build/v2.1.6.3/arm-linux-gnueabihf/ion-qt;
+strip ./build/v2.1.6.3/arm-linux-gnueabihf/iond
+strip ./build/v2.1.6.3/arm-linux-gnueabihf/ion-qt
 # created detached signatures
-cd build/v2.1.6.2/arm-linux-gnueabihf;
+cd build/v2.1.6.3/arm-linux-gnueabihf;
 
 gpg --detach-sign -o ion-qt.sig ion-qt
 gpg --verify ion-qt.sig
@@ -159,13 +159,13 @@ make clean;cd src;make clean;cd ..;
 ./configure --prefix=`pwd`/depends/aarch64-linux-gnu
 make HOST=aarch64-linux-gnu;
 
-mkdir -p build/v2.1.6.2/aarch64-linux-gnu;
-cp ./src/iond ./build/v2.1.6.2/aarch64-linux-gnu/iond;
-cp ./src/qt/ion-qt ./build/v2.1.6.2/aarch64-linux-gnu/ion-qt;
-strip ./build/v2.1.6.2/aarch64-linux-gnu/iond
-strip ./build/v2.1.6.2/aarch64-linux-gnu/ion-qt
+mkdir -p build/v2.1.6.3/aarch64-linux-gnu;
+cp ./src/iond ./build/v2.1.6.3/aarch64-linux-gnu/iond;
+cp ./src/qt/ion-qt ./build/v2.1.6.3/aarch64-linux-gnu/ion-qt;
+strip ./build/v2.1.6.3/aarch64-linux-gnu/iond
+strip ./build/v2.1.6.3/aarch64-linux-gnu/ion-qt
 # created detached signatures
-cd build/v2.1.6.2/aarch64-linux-gnu;
+cd build/v2.1.6.3/aarch64-linux-gnu;
 
 gpg --detach-sign -o ion-qt.sig ion-qt
 gpg --verify ion-qt.sig
@@ -178,13 +178,13 @@ cd ../../..;
 ./autogen.sh;
 ./configure --prefix=`pwd`/depends/arm-linux-gnueabihf
 make
-mkdir -p build/v2.1.6.2/arm-linux-gnueabihf;
-cp ./src/iond ./build/v2.1.6.2/arm-linux-gnueabihf/iond;
-cp ./src/qt/ion-qt ./build/v2.1.6.2/arm-linux-gnueabihf/ion-qt;
-strip ./build/v2.1.6.2/arm-linux-gnueabihf/iond
-strip ./build/v2.1.6.2/arm-linux-gnueabihf/ion-qt
+mkdir -p build/v2.1.6.3/arm-linux-gnueabihf;
+cp ./src/iond ./build/v2.1.6.3/arm-linux-gnueabihf/iond;
+cp ./src/qt/ion-qt ./build/v2.1.6.3/arm-linux-gnueabihf/ion-qt;
+strip ./build/v2.1.6.3/arm-linux-gnueabihf/iond
+strip ./build/v2.1.6.3/arm-linux-gnueabihf/ion-qt
 ## created detached signatures
-cd build/v2.1.6.2/arm-linux-gnueabihf;
+cd build/v2.1.6.3/arm-linux-gnueabihf;
 
 gpg --detach-sign -o ion-qt.sig ion-qt
 gpg --verify ion-qt.sig
@@ -199,13 +199,13 @@ make clean;cd src;make clean;cd ..;
 ./autogen.sh;
 ./configure --prefix=`pwd`/depends/host-platform-triplet
 make
-mkdir -p build/v2.1.6.2/host-platform-triplet;
-cp ./src/iond ./build/v2.1.6.2/host-platform-triplet/iond;
-cp ./src/qt/ion-qt ./build/v2.1.6.2/host-platform-triplet/ion-qt;
-strip ./build/v2.1.6.2/host-platform-triplet/iond
-strip ./build/v2.1.6.2/host-platform-triplet/ion-qt
+mkdir -p build/v2.1.6.3/host-platform-triplet;
+cp ./src/iond ./build/v2.1.6.3/host-platform-triplet/iond;
+cp ./src/qt/ion-qt ./build/v2.1.6.3/host-platform-triplet/ion-qt;
+strip ./build/v2.1.6.3/host-platform-triplet/iond
+strip ./build/v2.1.6.3/host-platform-triplet/ion-qt
 ## created detached signatures
-cd build/v2.1.6.2/host-platform-triplet;
+cd build/v2.1.6.3/host-platform-triplet;
 
 gpg --detach-sign -o ion-qt.sig ion-qt
 gpg --verify ion-qt.sig
@@ -221,13 +221,13 @@ make clean;cd src;make clean;cd ..;
 ./configure --prefix=`pwd`/depends/x86_64-apple-darwin11
 make HOST=x86_64-apple-darwin11;
 
-#mkdir -p build/v2.1.6.2/x86_64-apple-darwin11;
-#cp ./src/iond ./build/v2.1.6.2/x86_64-apple-darwin11/iond;
-#cp ./src/qt/ion-qt ./build/v2.1.6.2/x86_64-apple-darwin11/ion-qt;
-#strip ./build/v2.1.6.2/x86_64-apple-darwin11/iond
-#strip ./build/v2.1.6.2/x86_64-apple-darwin11/ion-qt
+#mkdir -p build/v2.1.6.3/x86_64-apple-darwin11;
+#cp ./src/iond ./build/v2.1.6.3/x86_64-apple-darwin11/iond;
+#cp ./src/qt/ion-qt ./build/v2.1.6.3/x86_64-apple-darwin11/ion-qt;
+#strip ./build/v2.1.6.3/x86_64-apple-darwin11/iond
+#strip ./build/v2.1.6.3/x86_64-apple-darwin11/ion-qt
 # created detached signatures
-#cd build/v2.1.6.2/x86_64-apple-darwin11;
+#cd build/v2.1.6.3/x86_64-apple-darwin11;
 
 #gpg --detach-sign -o ion-qt.sig ion-qt
 #gpg --verify ion-qt.sig
