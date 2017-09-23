@@ -491,7 +491,7 @@ Then when building, override the remote URLs that gbuild would otherwise pull fr
 ```bash
 
 cd /some/root/path/
-git clone https://github.com/ion-core/ion-detached-sigs.git
+git clone https://github.com/cevap/ion-detached-sigs.git
 
 IONPATH=/some/root/path/ion
 SIGPATH=/some/root/path/ion-detached-sigs
@@ -523,5 +523,5 @@ Uploading signatures
 ---------------------
 
 After building and signing you can push your signatures (both the `.assert` and `.assert.sig` files) to the
-[ion-core/gitian.sigs](https://github.com/ion-core/gitian.sigs/) repository, or if that's not possible create a pull
+[ion-core/gitian.sigs](https://github.com/cevap/gitian.sigs/) repository, or if that's not possible create a pull
 request. You can also mail the files to Wladimir (laanwj@gmail.com) and he will commit them.
