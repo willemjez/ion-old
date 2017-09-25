@@ -439,7 +439,62 @@ public:
     const CTxOut& GetOutputFor(const CTxIn& input, const MapPrevTx& inputs) const;
 };
 
+/** A mutable version of CTransaction. */
+struct CMutableTransaction
+{
+    int nVersion;
+    unsigned int nTime;
+    std::vector<CTxIn> vin;
+    std::vector<CTxOut> vout;
+    unsigned int nLockTime;
+/*
+    int32_t nVersion;
+    std::vector<CTxIn> vin;
+    std::vector<CTxOut> vout;
+    uint32_t nLockTime;
+*/
+    CMutableTransaction();
+    CMutableTransaction(const CTransaction& tx);
 
+    template <typename Stream>
+    inline void Serialize(Stream& s) const {
+        SerializeTransaction(*this, s);
+    }
+
+
+    template <typename Stream>
+    inline void Unserialize(Stream& s) {
+        UnserializeTransaction(*this, s);
+    }
+
+    IMPLEMENT_SERIALIZE
+    (
+        READWRITE(this->nVersion);
+        nVersion = this->nVersion;
+        READWRITE(nTime);
+        READWRITE(vin);
+        READWRITE(vout);
+        READWRITE(nLockTime);
+    )
+
+/*
+    template <typename Stream>
+//    CMutableTransaction(deserialize_type, Stream& s) {
+    CMutableTransaction(deserialize_type) {
+        Unserialize(s);
+    }
+*/
+    /** Compute the hash of this CMutableTransaction. This is computed on the
+     * fly, as opposed to GetHash() in CTransaction, which uses a cached result.
+     */
+    uint256 GetHash() const;
+
+    friend bool operator==(const CMutableTransaction& a, const CMutableTransaction& b)
+    {
+        return a.GetHash() == b.GetHash();
+    }
+
+};
 
 
 /** wrapper for CTxOut that provides a more compact serialization */

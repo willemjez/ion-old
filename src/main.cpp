@@ -411,6 +411,15 @@ unsigned int LimitOrphanTxSize(unsigned int nMaxOrphans)
     return nEvicted;
 }
 
+CMutableTransaction::CMutableTransaction() : nVersion(CTransaction::CURRENT_VERSION), nLockTime(0) {}
+CMutableTransaction::CMutableTransaction(const CTransaction& tx) : nVersion(tx.nVersion), vin(tx.vin), vout(tx.vout), nLockTime(tx.nLockTime) {}
+
+uint256 CMutableTransaction::GetHash() const
+{
+    return SerializeHash(*this);
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 //
 // CTransaction and CTxIndex
