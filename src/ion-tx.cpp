@@ -7,6 +7,7 @@
 #include "config/ion-config.h"
 #endif
 
+#include "core_io.h"
 #include "rpcclient.h"
 #include "init.h"
 
@@ -15,6 +16,8 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
 
+static bool fCreateBlank;
+static std::map<std::string,UniValue> registers;
 static const int CONTINUE_EXECUTION=-1;
 
 static int AppInitRawTx(int argc, char* argv[])
@@ -32,7 +35,6 @@ static int AppInitRawTx(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    static bool fCreateBlank;
     fCreateBlank = GetBoolArg("-create", false);
 
     if (argc<2 || mapArgs.count("-?") || mapArgs.count("-h") || mapArgs.count("-help")) 
@@ -95,6 +97,26 @@ static int AppInitRawTx(int argc, char* argv[])
     return CONTINUE_EXECUTION;
 }
 
+static std::string readStdin()
+{
+    char buf[4096];
+    std::string ret;
+
+    while (!feof(stdin)) {
+        size_t bread = fread(buf, 1, sizeof(buf), stdin);
+        ret.append(buf, bread);
+        if (bread < sizeof(buf))
+            break;
+    }
+
+    if (ferror(stdin))
+        throw std::runtime_error("error reading stdin");
+
+    boost::algorithm::trim_right(ret);
+
+    return ret;
+}
+
 static int CommandLineRawTx(int argc, char* argv[])
 {
     std::string strPrint;
@@ -109,7 +131,7 @@ static int CommandLineRawTx(int argc, char* argv[])
         }
         CMutableTransaction tx;
         int startArg;
-/*
+
 
         if (!fCreateBlank) {
             // require at least one param
@@ -139,10 +161,10 @@ static int CommandLineRawTx(int argc, char* argv[])
                 value = arg.substr(eqpos + 1);
             }
 
-            MutateTx(tx, key, value);
+//            MutateTx(tx, key, value);
         }
 
-        OutputTx(tx);*/
+//        OutputTx(tx);
     }
 
     catch (const boost::thread_interrupted&) {

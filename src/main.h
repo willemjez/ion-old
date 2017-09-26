@@ -6,7 +6,8 @@
 #define ION_MAIN_H
 
 #include "proofs.h"
-#include "core.h"
+#include "core.h" 
+#include "core_io.h"
 #include "sync.h"
 #include "txmempool.h"
 #include "net.h"
@@ -479,8 +480,7 @@ struct CMutableTransaction
 
 /*
     template <typename Stream>
-//    CMutableTransaction(deserialize_type, Stream& s) {
-    CMutableTransaction(deserialize_type) {
+    CMutableTransaction(deserialize_type, Stream& s) {
         Unserialize(s);
     }
 */

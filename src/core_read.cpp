@@ -3,16 +3,16 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "core_io.h"
-
-#include "primitives/block.h"
-#include "primitives/transaction.h"
-#include "script/script.h"
+#include "main.h"
+//#include "primitives/block.h"
+//#include "primitives/transaction.h"
+#include "script.h"
 #include "serialize.h"
-#include "streams.h"
+//#include "streams.h"
 #include <univalue.h>
 #include "util.h"
 #include "amount.h"
-#include "utilstrencodings.h"
+#include "util.h"
 #include "version.h"
 
 #include <boost/algorithm/string/classification.hpp>
@@ -99,7 +99,9 @@ bool DecodeHexTx(CMutableTransaction& tx, const std::string& strHexTx, bool fTry
     vector<unsigned char> txData(ParseHex(strHexTx));
 
     if (fTryNoWitness) {
-        CDataStream ssData(txData, SER_NETWORK, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS);
+// SERIALIZE_TRANSACTION_NO_WITNESS is to be defined in transaction.h
+//        CDataStream ssData(txData, SER_NETWORK, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS);
+        CDataStream ssData(txData, SER_NETWORK, PROTOCOL_VERSION);
         try {
             ssData >> tx;
             if (ssData.eof()) {

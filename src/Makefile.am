@@ -260,6 +260,7 @@ libion_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libion_common_a_SOURCES = \
 	base58.cpp \
 	chainparams.cpp \
+  core_read.cpp \
 	key.cpp \
 	keystore.cpp \
 	netbase.cpp \
