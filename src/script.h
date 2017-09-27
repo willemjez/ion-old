@@ -344,6 +344,8 @@ enum opcodetype
 
 const char* GetOpName(opcodetype opcode);
 
+bool CheckSignatureEncoding(const valtype &vchSig, unsigned int flags, ScriptError* serror);
+    
 class scriptnum_error : public std::runtime_error
 {
 public:

@@ -7,7 +7,6 @@
 
 #include "proofs.h"
 #include "core.h" 
-#include "core_io.h"
 #include "sync.h"
 #include "txmempool.h"
 #include "net.h"
@@ -244,7 +243,45 @@ typedef std::map<uint256, std::pair<CTxIndex, CTransaction> > MapPrevTx;
 int64_t GetMinFee(const CTransaction& tx, unsigned int nBytes, bool fAllowFree, enum GetMinFee_mode mode);
 
 
+struct CMutableTransaction;
 
+/**
+ * Basic transaction serialization format:
+ * - int32_t nVersion
+ * - std::vector<CTxIn> vin
+ * - std::vector<CTxOut> vout
+ * - uint32_t nLockTime
+ *
+ * Extended transaction serialization format (currently removed):
+ * - int32_t nVersion
+ * - unsigned char dummy = 0x00
+ * - unsigned char flags (!= 0)
+ * - std::vector<CTxIn> vin
+ * - std::vector<CTxOut> vout
+ * - if (flags & 1):
+ *   - CTxWitness wit;
+ * - uint32_t nLockTime
+ */
+ template<typename Stream, typename TxType>
+ inline void UnserializeTransaction(TxType& tx, Stream& s) {
+ 
+     s >> tx.nVersion;
+     tx.vin.clear();
+     tx.vout.clear();
+     s >> tx.vin;
+     /* We read a non-empty vin. Assume a normal vout follows. */
+     s >> tx.vout;
+     s >> tx.nLockTime;
+ }
+ 
+ template<typename Stream, typename TxType>
+ inline void SerializeTransaction(const TxType& tx, Stream& s) {
+ 
+     s << tx.nVersion;
+     s << tx.vin;
+     s << tx.vout;
+     s << tx.nLockTime;
+ }
 /** The basic transaction that is broadcasted on the network and contained in
  * blocks.  A transaction can contain multiple inputs and outputs.
  */
@@ -262,15 +299,16 @@ public:
     mutable int nDoS;
     bool DoS(int nDoSIn, bool fIn) const { nDoS += nDoSIn; return fIn; }
 
-    CTransaction()
-    {
-        SetNull();
-    }
+    CTransaction();
 
     CTransaction(int nVersion, unsigned int nTime, const std::vector<CTxIn>& vin, const std::vector<CTxOut>& vout, unsigned int nLockTime)
         : nVersion(nVersion), nTime(nTime), vin(vin), vout(vout), nLockTime(nLockTime), nDoS(0)
     {
     }
+
+    /** Convert a CMutableTransaction into a CTransaction. */
+    CTransaction(const CMutableTransaction &tx);
+    CTransaction(CMutableTransaction &&tx);
 
     IMPLEMENT_SERIALIZE
     (
@@ -496,6 +534,9 @@ struct CMutableTransaction
 
 };
 
+typedef std::shared_ptr<const CTransaction> CTransactionRef;
+static inline CTransactionRef MakeTransactionRef() { return std::make_shared<const CTransaction>(); }
+template <typename Tx> static inline CTransactionRef MakeTransactionRef(Tx&& txIn) { return std::make_shared<const CTransaction>(std::forward<Tx>(txIn)); }
 
 /** wrapper for CTxOut that provides a more compact serialization */
 class CTxOutCompressor

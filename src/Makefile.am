@@ -261,6 +261,7 @@ libion_common_a_SOURCES = \
 	base58.cpp \
 	chainparams.cpp \
   core_read.cpp \
+  core_write.cpp \
 	key.cpp \
 	keystore.cpp \
 	netbase.cpp \
@@ -357,9 +358,9 @@ ion_tx_SOURCES += ion-tx-res.rc
 endif
 
 ion_tx_LDADD = \
-  $(LIBUNIVALUE) \
   $(LIBION_SERVER) \
   $(LIBION_COMMON) \
+  $(LIBUNIVALUE) \
   $(LIBION_UTIL) \
   $(LIBION_WALLET) \
   $(LIBION_CONSENSUS) \

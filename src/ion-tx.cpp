@@ -96,6 +96,101 @@ static int AppInitRawTx(int argc, char* argv[])
     }
     return CONTINUE_EXECUTION;
 }
+class Secp256k1Init
+{
+    ECCVerifyHandle globalVerifyHandle;
+
+public:
+    Secp256k1Init() {
+        ECC_Start();
+    }
+    ~Secp256k1Init() {
+        ECC_Stop();
+    }
+};
+
+static void MutateTx(CMutableTransaction& tx, const std::string& command, const std::string& commandVal)
+{
+    std::unique_ptr<Secp256k1Init> ecc;
+    
+/*
+    if (command == "nversion")
+    MutateTxVersion(tx, commandVal);
+    else if (command == "locktime")
+    MutateTxLocktime(tx, commandVal);
+    else if (command == "replaceable") {
+    MutateTxRBFOptIn(tx, commandVal);
+    }
+    
+    else if (command == "delin")
+    MutateTxDelInput(tx, commandVal);
+    else if (command == "in")
+    MutateTxAddInput(tx, commandVal);
+    
+    else if (command == "delout")
+    MutateTxDelOutput(tx, commandVal);
+    else if (command == "outaddr")
+    MutateTxAddOutAddr(tx, commandVal);
+    else if (command == "outpubkey") {
+    if (!ecc) { ecc.reset(new Secp256k1Init()); }
+    MutateTxAddOutPubKey(tx, commandVal);
+    } else if (command == "outmultisig") {
+    if (!ecc) { ecc.reset(new Secp256k1Init()); }
+    MutateTxAddOutMultiSig(tx, commandVal);
+    } else if (command == "outscript")
+    MutateTxAddOutScript(tx, commandVal);
+    else if (command == "outdata")
+    MutateTxAddOutData(tx, commandVal);
+    
+    else if (command == "sign") {
+    if (!ecc) { ecc.reset(new Secp256k1Init()); }
+    MutateTxSign(tx, commandVal);
+    }
+    
+    else if (command == "load")
+    RegisterLoad(commandVal);
+    
+    else if (command == "set")
+    RegisterSet(commandVal);
+    
+    else
+        throw std::runtime_error("unknown command");
+*/
+}
+
+
+static void OutputTxJSON(const CTransaction& tx)
+{
+    UniValue entry(UniValue::VOBJ);
+    TxToUniv(tx, uint256(), entry);
+
+    std::string jsonOutput = entry.write(4);
+    fprintf(stdout, "%s\n", jsonOutput.c_str());
+}
+
+static void OutputTxHash(const CTransaction& tx)
+{
+    std::string strHexHash = tx.GetHash().GetHex(); // the hex-encoded transaction hash (aka the transaction id)
+
+    fprintf(stdout, "%s\n", strHexHash.c_str());
+}
+
+static void OutputTxHex(const CTransaction& tx)
+{
+    std::string strHex = EncodeHexTx(tx);
+
+    fprintf(stdout, "%s\n", strHex.c_str());
+}
+
+static void OutputTx(const CTransaction& tx)
+{
+    if (GetBoolArg("-json", false))
+        OutputTxJSON(tx);
+    else if (GetBoolArg("-txid", false))
+        OutputTxHash(tx);
+    else
+        OutputTxHex(tx);
+}
 
 static std::string readStdin()
 {
@@ -161,10 +256,10 @@ static int CommandLineRawTx(int argc, char* argv[])
                 value = arg.substr(eqpos + 1);
             }
 
-//            MutateTx(tx, key, value);
+            MutateTx(tx, key, value);
         }
 
-//        OutputTx(tx);
+        OutputTx(tx);
     }
 
     catch (const boost::thread_interrupted&) {
