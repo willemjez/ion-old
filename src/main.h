@@ -266,6 +266,7 @@ struct CMutableTransaction;
  inline void UnserializeTransaction(TxType& tx, Stream& s) {
  
      s >> tx.nVersion;
+     s >> tx.nTime;
      tx.vin.clear();
      tx.vout.clear();
      s >> tx.vin;
@@ -278,6 +279,7 @@ struct CMutableTransaction;
  inline void SerializeTransaction(const TxType& tx, Stream& s) {
  
      s << tx.nVersion;
+     s << tx.nTime;
      s << tx.vin;
      s << tx.vout;
      s << tx.nLockTime;
@@ -288,7 +290,16 @@ struct CMutableTransaction;
 class CTransaction
 {
 public:
+
+    // Default transaction version.
     static const int CURRENT_VERSION=1;
+
+    // Changing the default transaction version requires a two step process: first
+    // adapting relay policy by bumping MAX_STANDARD_VERSION, and then later date
+    // bumping the default CURRENT_VERSION at which point both CURRENT_VERSION and
+    // MAX_STANDARD_VERSION will be equal.
+    static const int32_t MAX_STANDARD_VERSION=1;
+
     int nVersion;
     unsigned int nTime;
     std::vector<CTxIn> vin;

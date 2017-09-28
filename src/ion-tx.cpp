@@ -96,6 +96,25 @@ static int AppInitRawTx(int argc, char* argv[])
     }
     return CONTINUE_EXECUTION;
 }
+
+static void MutateTxVersion(CMutableTransaction& tx, const std::string& cmdVal)
+{
+    int64_t newVersion = atoi64(cmdVal);
+    if (newVersion < 1 || newVersion > CTransaction::MAX_STANDARD_VERSION)
+        throw std::runtime_error("Invalid TX version requested");
+
+    tx.nVersion = (int) newVersion;
+}
+
+static void MutateTxLocktime(CMutableTransaction& tx, const std::string& cmdVal)
+{
+    int64_t newLocktime = atoi64(cmdVal);
+    if (newLocktime < 0LL || newLocktime > 0xffffffffLL)
+        throw std::runtime_error("Invalid TX locktime requested");
+
+    tx.nLockTime = (unsigned int) newLocktime;
+}
+
 class Secp256k1Init
 {
     ECCVerifyHandle globalVerifyHandle;
@@ -113,11 +132,12 @@ static void MutateTx(CMutableTransaction& tx, const std::string& command, const 
 {
     std::unique_ptr<Secp256k1Init> ecc;
     
-/*
-    if (command == "nversion")
+
+    if (command == "nversion") 
     MutateTxVersion(tx, commandVal);
     else if (command == "locktime")
     MutateTxLocktime(tx, commandVal);
+/*
     else if (command == "replaceable") {
     MutateTxRBFOptIn(tx, commandVal);
     }
