@@ -7,9 +7,11 @@
 #include "config/ion-config.h"
 #endif
 
+#include "base58.h"
 #include "core_io.h"
 #include "rpcclient.h"
 #include "init.h"
+#include "script.h"
 
 #include <univalue.h>
 
@@ -40,10 +42,10 @@ static int AppInitRawTx(int argc, char* argv[])
     if (argc<2 || mapArgs.count("-?") || mapArgs.count("-h") || mapArgs.count("-help")) 
         {
         // First part of help message is specific to this utility
-        std::string strUsage = strprintf(_("%s bitcoin-tx utility version"), _(PACKAGE_NAME)) + " " + FormatFullVersion() + "\n\n" +
+        std::string strUsage = strprintf(_("%s ion-tx utility version"), _(PACKAGE_NAME)) + " " + FormatFullVersion() + "\n\n" +
             _("Usage:") + "\n" +
-              "  bitcoin-tx [options] <hex-tx> [commands]  " + _("Update hex-encoded bitcoin transaction") + "\n" +
-              "  bitcoin-tx [options] -create [commands]   " + _("Create hex-encoded bitcoin transaction") + "\n" +
+              "  ion-tx [options] <hex-tx> [commands]  " + _("Update hex-encoded ion transaction") + "\n" +
+              "  ion-tx [options] -create [commands]   " + _("Create hex-encoded ion transaction") + "\n" +
               "\n";
 
         fprintf(stdout, "%s", strUsage.c_str());
@@ -97,6 +99,14 @@ static int AppInitRawTx(int argc, char* argv[])
     return CONTINUE_EXECUTION;
 }
 
+static CAmount ExtractAndValidateValue(const std::string& strValue)
+{
+    CAmount value;
+    if (!ParseMoney(strValue, value))
+        throw std::runtime_error("invalid TX output value");
+    return value;
+}
+
 static void MutateTxVersion(CMutableTransaction& tx, const std::string& cmdVal)
 {
     int64_t newVersion = atoi64(cmdVal);
@@ -113,6 +123,136 @@ static void MutateTxLocktime(CMutableTransaction& tx, const std::string& cmdVal)
         throw std::runtime_error("Invalid TX locktime requested");
 
     tx.nLockTime = (unsigned int) newLocktime;
+}
+
+static void MutateTxAddInput(CMutableTransaction& tx, const std::string& strInput)
+{
+    std::vector<std::string> vStrInputParts;
+    boost::split(vStrInputParts, strInput, boost::is_any_of(":"));
+
+    // separate TXID:VOUT in string
+    if (vStrInputParts.size()<2)
+        throw std::runtime_error("TX input missing separator");
+
+    // extract and validate TXID
+    std::string strTxid = vStrInputParts[0];
+    if ((strTxid.size() != 64) || !IsHex(strTxid))
+        throw std::runtime_error("invalid TX input txid");
+    uint256 txid(uint256S(strTxid));
+
+    static const unsigned int minTxOutSz = 9;
+    static const unsigned int maxVout = MAX_BLOCK_SIZE / minTxOutSz;
+
+    // extract and validate vout
+    std::string strVout = vStrInputParts[1];
+    int vout = atoi(strVout);
+    if ((vout < 0) || (vout > (int)maxVout))
+        throw std::runtime_error("invalid TX input vout");
+
+    // extract the optional sequence number
+    uint32_t nSequenceIn=std::numeric_limits<unsigned int>::max();
+    if (vStrInputParts.size() > 2)
+        nSequenceIn = std::stoul(vStrInputParts[2]);
+
+    // append to transaction input list
+    CTxIn txin(txid, vout, CScript(), nSequenceIn);
+    tx.vin.push_back(txin);
+}
+
+static void MutateTxAddOutAddr(CMutableTransaction& tx, const std::string& strInput)
+{
+    // Separate into VALUE:ADDRESS
+    std::vector<std::string> vStrInputParts;
+    boost::split(vStrInputParts, strInput, boost::is_any_of(":"));
+
+    if (vStrInputParts.size() != 2)
+        throw std::runtime_error("TX output missing or too many separators");
+
+    // Extract and validate VALUE
+    CAmount value = ExtractAndValidateValue(vStrInputParts[0]);
+
+    // extract and validate ADDRESS
+    std::string strAddr = vStrInputParts[1];
+    CIonAddress addr(strAddr);
+    if (!addr.IsValid())
+        throw std::runtime_error("invalid TX output address");
+    // build standard output script via GetScriptForDestination()
+    CScript scriptPubKey = GetScriptForDestination(addr.Get());
+
+    // construct TxOut, append to transaction output list
+    CTxOut txout(value, scriptPubKey);
+    tx.vout.push_back(txout);
+}
+
+static void MutateTxAddOutPubKey(CMutableTransaction& tx, const std::string& strInput)
+{
+    // Separate into VALUE:PUBKEY[:FLAGS]
+    std::vector<std::string> vStrInputParts;
+    boost::split(vStrInputParts, strInput, boost::is_any_of(":"));
+
+    if (vStrInputParts.size() < 2 || vStrInputParts.size() > 3)
+        throw std::runtime_error("TX output missing or too many separators");
+
+    // Extract and validate VALUE
+    CAmount value = ExtractAndValidateValue(vStrInputParts[0]);
+
+    // Extract and validate PUBKEY
+    CPubKey pubkey(ParseHex(vStrInputParts[1]));
+    if (!pubkey.IsFullyValid())
+        throw std::runtime_error("invalid TX output pubkey");
+    CScript scriptPubKey = GetScriptForRawPubKey(pubkey);
+
+    // Extract and validate FLAGS
+//    bool bSegWit = false;
+    bool bScriptHash = false;
+    if (vStrInputParts.size() == 3) {
+        std::string flags = vStrInputParts[2];
+//        bSegWit = (flags.find("W") != std::string::npos);
+        bScriptHash = (flags.find("S") != std::string::npos);
+    }
+
+/* SegWit is unimplemented
+    if (bSegWit) {
+        // Call GetScriptForWitness() to build a P2WSH scriptPubKey
+        scriptPubKey = GetScriptForWitness(scriptPubKey);
+    }
+*/
+    if (bScriptHash) {
+        // Get the address for the redeem script, then call
+        // GetScriptForDestination() to construct a P2SH scriptPubKey.
+        CIonAddress redeemScriptAddr(scriptPubKey);
+        scriptPubKey = GetScriptForDestination(redeemScriptAddr.Get());
+    }
+
+    // construct TxOut, append to transaction output list
+    CTxOut txout(value, scriptPubKey);
+    tx.vout.push_back(txout);
+}
+
+static void MutateTxDelInput(CMutableTransaction& tx, const std::string& strInIdx)
+{
+    // parse requested deletion index
+    int inIdx = atoi(strInIdx);
+    if (inIdx < 0 || inIdx >= (int)tx.vin.size()) {
+        std::string strErr = "Invalid TX input index '" + strInIdx + "'";
+        throw std::runtime_error(strErr.c_str());
+    }
+
+    // delete input from transaction
+    tx.vin.erase(tx.vin.begin() + inIdx);
+}
+
+static void MutateTxDelOutput(CMutableTransaction& tx, const std::string& strOutIdx)
+{
+    // parse requested deletion index
+    int outIdx = atoi(strOutIdx);
+    if (outIdx < 0 || outIdx >= (int)tx.vout.size()) {
+        std::string strErr = "Invalid TX output index '" + strOutIdx + "'";
+        throw std::runtime_error(strErr.c_str());
+    }
+
+    // delete output from transaction
+    tx.vout.erase(tx.vout.begin() + outIdx);
 }
 
 class Secp256k1Init
@@ -137,13 +277,17 @@ static void MutateTx(CMutableTransaction& tx, const std::string& command, const 
     MutateTxVersion(tx, commandVal);
     else if (command == "locktime")
     MutateTxLocktime(tx, commandVal);
-/*
+/** Currently 'replaceable' and RBF (Replace By Fee) are unimplemented and rely on more extensive mempool managent.
+ * Most notably, it needs accouting of parents and children.
+ *
     else if (command == "replaceable") {
     MutateTxRBFOptIn(tx, commandVal);
     }
-    
+ */
+
     else if (command == "delin")
     MutateTxDelInput(tx, commandVal);
+
     else if (command == "in")
     MutateTxAddInput(tx, commandVal);
     
@@ -154,7 +298,9 @@ static void MutateTx(CMutableTransaction& tx, const std::string& command, const 
     else if (command == "outpubkey") {
     if (!ecc) { ecc.reset(new Secp256k1Init()); }
     MutateTxAddOutPubKey(tx, commandVal);
-    } else if (command == "outmultisig") {
+    } 
+/*
+    else if (command == "outmultisig") {
     if (!ecc) { ecc.reset(new Secp256k1Init()); }
     MutateTxAddOutMultiSig(tx, commandVal);
     } else if (command == "outscript")
@@ -253,7 +399,7 @@ static int CommandLineRawTx(int argc, char* argv[])
             if (argc < 2)
                 throw std::runtime_error("too few parameters");
 
-            // param: hex-encoded bitcoin transaction
+            // param: hex-encoded ion transaction
             std::string strHexTx(argv[1]);
             if (strHexTx == "-")                 // "-" implies standard input
                 strHexTx = readStdin();
