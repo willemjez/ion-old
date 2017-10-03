@@ -274,6 +274,49 @@ Value getblockbynumber(const Array& params, bool fHelp)
     return blockToJSON(block, pblockindex, params.size() > 1 ? params[1].get_bool() : false);
 }
 
+Value getblockrange(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() < 1 || params.size() > 3)
+        throw runtime_error(
+            "getblockrange <number start> [number end] [txinfo]\n"
+            "number end optional - defaults to the last available block\n"
+            "txinfo optional to print more detailed tx info\n"
+            "Returns details of a range of blocks between given block-number.");
+
+    int nHeightStart = params[0].get_int();
+    if (nHeightStart < 0 || nHeightStart > nBestHeight)
+        throw runtime_error("Block number out of range.");
+
+    int nHeightEnd = params.size() > 1 ? params[1].get_int() : nBestHeight;
+    if (nHeightStart < nHeightStart || nHeightEnd > nBestHeight)
+        throw runtime_error("Block number out of range.");
+
+    bool fPrintTransactionDetail = params.size() > 2 ? params[2].get_bool() : false;
+
+    Object result;
+        // TODO: ADD iterator
+    CBlock block;
+    CBlockIndex* pblockindex = mapBlockIndex[hashBestChain];
+    while (pblockindex->nHeight > nHeightStart)
+    {
+        while (pblockindex->nHeight > nHeightEnd)
+        {
+            pblockindex = pblockindex->pprev;
+        }
+        uint256 hash = *pblockindex->phashBlock;
+
+        pblockindex = mapBlockIndex[hash];
+        block.ReadFromDisk(pblockindex, true);
+
+        Object blockObject = blockToJSON(block, pblockindex, fPrintTransactionDetail);
+        
+        result.push_back(Pair(std::to_string(pblockindex->nHeight), blockObject));
+
+        pblockindex = pblockindex->pprev;
+    }
+    return result;
+}
+
 // ion: get information of sync-checkpoint
 Value getcheckpoint(const Array& params, bool fHelp)
 {
