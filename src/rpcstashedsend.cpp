@@ -4,7 +4,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "main.h"
-#include "core.h"
+#include "primitives/transaction.h"
 #include "db.h"
 #include "init.h"
 #include "activemasternode.h"
@@ -508,7 +508,7 @@ Value masternode(const Array& params, bool fHelp)
         if(winner) {
             Object obj;
             CScript pubkey;
-            pubkey.SetDestination(winner->pubkey.GetID());
+            pubkey = GetScriptForDestination(winner->pubkey.GetID());
             CTxDestination address1;
             ExtractDestination(pubkey, address1);
             CIonAddress address2(address1);
@@ -817,7 +817,7 @@ Value masternodelist(const Array& params, bool fHelp)
                 obj.push_back(Pair(strVin,       strOut.c_str()));
             } else if (strMode == "full") {
                 CScript pubkey;
-                pubkey.SetDestination(mn.pubkey.GetID());
+                pubkey = GetScriptForDestination(mn.pubkey.GetID());
                 CTxDestination address1;
                 ExtractDestination(pubkey, address1);
                 CIonAddress address2(address1);
@@ -848,7 +848,7 @@ Value masternodelist(const Array& params, bool fHelp)
                 obj.push_back(Pair(strVin,       (int64_t)mn.protocolVersion));
             } else if (strMode == "pubkey") {
                 CScript pubkey;
-                pubkey.SetDestination(mn.pubkey.GetID());
+                pubkey = GetScriptForDestination(mn.pubkey.GetID());
                 CTxDestination address1;
                 ExtractDestination(pubkey, address1);
                 CIonAddress address2(address1);

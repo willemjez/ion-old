@@ -5,12 +5,11 @@
 #ifndef ION_KEYSTORE_H
 #define ION_KEYSTORE_H
 
-#include "key.h"
-#include "pubkey.h"
 #include "sync.h"
-#include <boost/signals2/signal.hpp>
-#include "script.h"
+#include "key.h"
+#include "script/standard.h"
 
+#include <boost/signals2/signal.hpp>
 #include <boost/variant.hpp>
 
 class CScript;

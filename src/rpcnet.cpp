@@ -7,7 +7,6 @@
 
 #include "main.h"
 #include "alert.h"
-#include "main.h"
 #include "net.h"
 #include "netbase.h"
 #include "protocol.h"

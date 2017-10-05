@@ -251,7 +251,7 @@ bool CActiveMasternode::Register(std::string strService, std::string strKeyMaste
             LogPrintf("ActiveMasternode::Register - Invalid Donation Address\n");
             return false;
         }
-        donationAddress.SetDestination(address.Get());
+        donationAddress = GetScriptForDestination(address.Get());
 
         try {
             donationPercentage = boost::lexical_cast<int>( strDonationPercentage );
@@ -447,7 +447,7 @@ vector<COutput> CActiveMasternode::SelectCoinsMasternodeForPubKey(std::string co
 {
     CIonAddress address(collateralAddress);
     CScript scriptPubKey;
-    scriptPubKey.SetDestination(address.Get());
+    scriptPubKey = GetScriptForDestination(address.Get());
     vector<COutput> vCoins;
     vector<COutput> filteredCoins;
 

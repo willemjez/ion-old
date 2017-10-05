@@ -5,7 +5,13 @@
 #ifndef ION_TXMEMPOOL_H
 #define ION_TXMEMPOOL_H
 
-#include "core.h"
+#include "primitives/transaction.h"
+#include "sync.h"
+
+#include <map>
+#include <set>
+#include <stdint.h>
+#include <vector>
 
 /*
  * CTxMemPool stores valid-according-to-the-current-best-chain

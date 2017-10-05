@@ -15,8 +15,9 @@
 #define ION_BASE58_H
 
 #include "chainparams.h"
-#include "pubkey.h"
-#include "script.h"
+#include "key.h"
+
+#include "script/standard.h"
 
 #include <string>
 #include <vector>

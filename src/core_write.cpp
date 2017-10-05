@@ -6,16 +6,11 @@
 
 #include "base58.h"
 #include "main.h"
-//#include "primitives/transaction.h"
-#include "script.h"
-//#include "script/standard.h"
+#include "script/interpreter.h"
 #include "serialize.h"
-//#include "streams.h"
 #include <univalue.h>
 #include "util.h"
 #include "amount.h"
-//#include "utilmoneystr.h"
-//#include "utilstrencodings.h"
 
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>

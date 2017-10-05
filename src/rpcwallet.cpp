@@ -14,6 +14,7 @@
 #include "amount.h"
 #include "wallet.h"
 #include "walletdb.h"
+#include "json/json_spirit_value.h"
 
 using namespace std;
 using namespace json_spirit;
@@ -138,7 +139,7 @@ CScript _createmultisig(const Array& params)
         }
     }
     CScript result;
-    result.SetMultisig(nRequired, pubkeys);
+    result = GetScriptForMultisig(nRequired, pubkeys);
     return result;
 }
 
@@ -264,7 +265,7 @@ CIonAddress GetAccountAddress(string strAccount, bool bForceNew=false)
     if (account.vchPubKey.IsValid())
     {
         CScript scriptPubKey;
-        scriptPubKey.SetDestination(account.vchPubKey.GetID());
+        scriptPubKey = GetScriptForDestination(account.vchPubKey.GetID());
         for (map<uint256, CWalletTx>::iterator it = pwalletMain->mapWallet.begin();
              it != pwalletMain->mapWallet.end() && account.vchPubKey.IsValid();
              ++it)
@@ -455,6 +456,8 @@ Value sendtoaddress(const Array& params, bool fHelp)
     // Amount
     CAmount nAmount = AmountFromValue(params[1]);
 
+    LogPrint("tx", "rpcwallet.cpp - sendtoaddress() - nAmount = [%f]\n", nAmount);
+
     CWalletTx wtx;
     std::string sNarr;
 
@@ -467,6 +470,42 @@ Value sendtoaddress(const Array& params, bool fHelp)
         sNarr = params[4].get_str();
     if (sNarr.length() > 24)
         throw std::runtime_error("Narration must be 24 characters or less.");
+
+    std::string wtxString = wtx.ToString();
+
+    LogPrint("tx", "rpcwallet.cpp - sendtoaddress() - wtxString = [%s]\n", wtxString);
+
+    CDataStream ssWtx(SER_NETWORK, PROTOCOL_VERSION);
+    ssWtx << wtx;
+
+    LogPrint("tx", "rpcwallet.cpp - sendtoaddress() - ssWtx = [%s]\n", ssWtx.str());
+    
+    string strHex = HexStr(ssWtx.begin(), ssWtx.end());
+
+    LogPrint("tx", "rpcwallet.cpp - sendtoaddress() - strHex = [%s]\n", strHex);
+    
+    Object resultObject;
+    resultObject.push_back(Pair("hex", strHex));
+    TxToJSON(wtx, 0, resultObject);
+
+    std::string resultString;
+    const Value& error = find_value(resultObject, "vin");
+    if (error.type() == null_type)
+        resultString = "";
+    else if (error.type() == str_type)
+        resultString = error.get_str();
+    else
+        resultString = write_string(error, true);
+
+    const Value& result = find_value(resultObject, "vout");
+    if (result.type() == null_type)
+        wtxString = "";
+    else if (result.type() == str_type)
+        wtxString = result.get_str();
+    else
+        wtxString = write_string(result, true);
+
+    LogPrint("tx", "rpcwallet.cpp - sendtoaddress() - wtxString from deserialization = [%s] [%s]\n", wtxString, resultString);
 
     std::string strError = pwalletMain->SendMoneyToDestination(address.Get(), nAmount, sNarr, wtx);
 
@@ -601,7 +640,7 @@ Value getreceivedbyaddress(const Array& params, bool fHelp)
     CScript scriptPubKey;
     if (!address.IsValid())
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Ion address");
-    scriptPubKey.SetDestination(address.Get());
+    scriptPubKey = GetScriptForDestination(address.Get());
     if (!IsMine(*pwalletMain,scriptPubKey))
         return (double)0.0;
 
@@ -995,7 +1034,7 @@ Value sendmany(const Array& params, bool fHelp)
         setAddress.insert(address);
 
         CScript scriptPubKey;
-        scriptPubKey.SetDestination(address.Get());
+        scriptPubKey = GetScriptForDestination(address.Get());
         CAmount nAmount = AmountFromValue(s.value_);
 
         totalAmount += nAmount;
@@ -1113,7 +1152,7 @@ Value addmultisigaddress(const Array& params, bool fHelp)
 
     // Construct using pay-to-script-hash:
     CScript inner;
-    inner.SetMultisig(nRequired, pubkeys);
+    inner = GetScriptForMultisig(nRequired, pubkeys);
     CScriptID innerID = inner.GetID();
     if (!pwalletMain->AddCScript(inner))
         throw runtime_error("AddCScript() failed");

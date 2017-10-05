@@ -2,19 +2,19 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "masternode-pos.h"
+
 #include "sync.h"
 #include "net.h"
 #include "key.h"
 #include "util.h"
 #include "amount.h"
-#include "script.h"
 #include "base58.h"
 #include "protocol.h"
 #include "activemasternode.h"
 #include "masternodeman.h"
 #include "spork.h"
 #include <boost/lexical_cast.hpp>
-#include "masternodeman.h"
 
 using namespace std;
 using namespace boost;
@@ -193,7 +193,7 @@ bool CMasternodeScanningError::SignatureValid()
     }
 
     CScript pubkey;
-    pubkey.SetDestination(pmn->pubkey2.GetID());
+    pubkey = GetScriptForDestination(pmn->pubkey2.GetID());
     CTxDestination address1;
     ExtractDestination(pubkey, address1);
     CIonAddress address2(address1);
@@ -222,7 +222,7 @@ bool CMasternodeScanningError::Sign()
     }
 
     CScript pubkey;
-    pubkey.SetDestination(pubkey2.GetID());
+    pubkey = GetScriptForDestination(pubkey2.GetID());
     CTxDestination address1;
     ExtractDestination(pubkey, address1);
     CIonAddress address2(address1);

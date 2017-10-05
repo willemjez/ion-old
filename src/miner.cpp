@@ -122,7 +122,7 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
         CPubKey pubkey;
         if (!reservekey.GetReservedKey(pubkey))
             return NULL;
-        txNew.vout[0].scriptPubKey.SetDestination(pubkey.GetID());
+        txNew.vout[0].scriptPubKey = GetScriptForDestination(pubkey.GetID());
     }
     else
     {

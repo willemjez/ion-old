@@ -5,6 +5,7 @@
 #include "sync.h"
 
 #include "util.h"
+#include "utilstrencodings.h"
 #include "amount.h"
 
 #include <boost/foreach.hpp>

@@ -286,6 +286,13 @@ public:
         return pn[0] | (uint64_t)pn[1] << 32;
     }
 
+    uint64_t GetUint64(int pos) const
+    {
+        const uint32_t* ptr = pn + pos * 2;
+        return ((uint64_t)ptr[0]) | \
+               ((uint64_t)ptr[1]) << 32;
+    }
+
     unsigned int GetSerializeSize(int nType, int nVersion) const
     {
         return sizeof(pn);

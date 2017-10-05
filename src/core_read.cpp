@@ -4,11 +4,7 @@
 
 #include "core_io.h"
 #include "main.h"
-//#include "primitives/block.h"
-//#include "primitives/transaction.h"
-#include "script.h"
 #include "serialize.h"
-//#include "streams.h"
 #include <univalue.h>
 #include "util.h"
 #include "amount.h"

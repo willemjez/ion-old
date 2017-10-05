@@ -23,6 +23,8 @@
 #include "chainparams.h"
 #include "main.h"
 #include "proofs.h"
+#include "script/sign.h"
+#include "script/standardkeystore.h"
 
 #include <boost/algorithm/string/replace.hpp>
 
@@ -2471,7 +2473,7 @@ bool CWallet::CreateTransaction(const vector<pair<CScript, int64_t> >& vecSend, 
 
                     // coin control: send change to custom address
                     if (coinControl && !boost::get<CNoDestination>(&coinControl->destChange))
-                        scriptChange.SetDestination(coinControl->destChange);
+                        scriptChange = GetScriptForDestination(coinControl->destChange);
 
                     // no coin control: send change to newly generated address
                     else
@@ -2489,7 +2491,7 @@ bool CWallet::CreateTransaction(const vector<pair<CScript, int64_t> >& vecSend, 
                         ret = reservekey.GetReservedKey(vchPubKey);
                         assert(ret); // should never fail, as we just unlocked
 
-                        scriptChange.SetDestination(vchPubKey.GetID());
+                        scriptChange = GetScriptForDestination(vchPubKey.GetID());
                     }
 
                     CTxOut newTxOut(nChange, scriptChange);
@@ -3069,7 +3071,7 @@ bool CWallet::SendStealthMoneyToDestination(CStealthAddress& sxAddress, CAmount 
 
     // -- Parse Ion address
     CScript scriptPubKey;
-    scriptPubKey.SetDestination(addrTo.Get());
+    scriptPubKey = GetScriptForDestination(addrTo.Get());
 
     if ((sError = SendStealthMoney(scriptPubKey, nValue, ephem_pubkey, vchNarr, sNarr, wtxNew, fAskFee)) != "")
         return false;
@@ -3704,7 +3706,7 @@ string CWallet::SendMoneyToDestination(const CTxDestination& address, CAmount nV
 
     // Parse Ion address
     CScript scriptPubKey;
-    scriptPubKey.SetDestination(address);
+    scriptPubKey = GetScriptForDestination(address);
 
     return SendMoney(scriptPubKey, nValue, sNarr, wtxNew, fAskFee);
 }

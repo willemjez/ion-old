@@ -393,7 +393,7 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(WalletModelTransaction &tran
                     };
 
                     CScript scriptPubKey;
-                    scriptPubKey.SetDestination(addrTo.Get());
+                    scriptPubKey = GetScriptForDestination(addrTo.Get());
 
                     vecSend.push_back(make_pair(scriptPubKey, rcp.amount));
 
@@ -443,7 +443,7 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(WalletModelTransaction &tran
             }
 
             CScript scriptPubKey;
-            scriptPubKey.SetDestination(CIonAddress(sAddr).Get());
+            scriptPubKey = GetScriptForDestination(CIonAddress(sAddr).Get());
             vecSend.push_back(make_pair(scriptPubKey, rcp.amount));
 
             if (rcp.narration.length() > 0)

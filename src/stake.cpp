@@ -8,6 +8,7 @@
 #include "proofs.h"
 #include "stake.h"
 #include "txdb.h"
+#include "script/interpreter.h"
 
 using namespace std;
 

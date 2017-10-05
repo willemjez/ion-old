@@ -10,6 +10,7 @@
 #include "chainparams.h"
 #include "main.h"
 #include "util.h"
+#include "utilstrencodings.h"
 #include "amount.h"
 
 #include <boost/assign/list_of.hpp>

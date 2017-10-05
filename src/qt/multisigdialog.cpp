@@ -12,7 +12,8 @@
 #include "multisiginputentry.h"
 #include "multisigdialog.h"
 #include "ui_multisigdialog.h"
-#include "script.h"
+#include "script/script.h"
+#include "script/sign.h"
 #include "sendcoinsentry.h"
 #include "util.h"
 #include "wallet.h"
@@ -149,7 +150,7 @@ void MultisigDialog::on_createAddressButton_clicked()
         return;
 
     CScript script;
-    script.SetMultisig(required, pubkeys);
+    script = GetScriptForMultisig(required, pubkeys);
     CScriptID scriptID = script.GetID();
     CIonAddress address(scriptID);
 
@@ -272,7 +273,7 @@ void MultisigDialog::on_createTransactionButton_clicked()
                 SendCoinsRecipient recipient = entry->getValue();
                 CIonAddress address(recipient.address.toStdString());
                 CScript scriptPubKey;
-                scriptPubKey.SetDestination(address.Get());
+                scriptPubKey = GetScriptForDestination(address.Get());
                 CAmount amount = recipient.amount;
                 CTxOut output(amount, scriptPubKey);
                 transaction.vout.push_back(output);

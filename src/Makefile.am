@@ -89,8 +89,9 @@ ION_CORE_H = \
   checkpoints.h \
   clientversion.h \
   coincontrol.h \
+  coins.h \
   compat.h \
-  core.h \
+  compressor.h \
   core_io.h  \
   core_memusage.h \
   crypter.h \
@@ -110,11 +111,14 @@ ION_CORE_H = \
   masternode.h \
   masternodeconfig.h \
   masternodeman.h \
+  memusage.h \
   miner.h \
   mruset.h \
   net.h \
   netbase.h \
+  policy/policy.h \
   prevector.h \
+  primitives/transaction.h \
   proofs.h \
   protocol.h \
   pubkey.h \
@@ -123,6 +127,14 @@ ION_CORE_H = \
   rpcprotocol.h \
   rpcserver.h \
   script.h \
+  script/interpreter.h \
+  script/ismine.h \
+  script/sigcache.h \
+  script/script.h \
+  script/script_error.h \
+  script/sign.h \
+  script/standard.h \
+  script/standardkeystore.h \
   serialize.h \
   spork.h \
   stake.h \
@@ -163,7 +175,6 @@ libion_server_a_SOURCES = \
 	allocators.cpp \
 	amount.cpp \
 	checkpoints.cpp \
-	core.cpp \
 	crypter.cpp \
 	ecwrapper.cpp \
 	hash.cpp \
@@ -188,6 +199,8 @@ libion_server_a_SOURCES = \
 	masternodeman.cpp \
 	net.cpp \
 	noui.cpp \
+  policy/policy.cpp \
+	primitives/transaction.cpp \
 	proofs.cpp \
 	pubkey.cpp \
 	rpcblockchain.cpp \
@@ -196,7 +209,9 @@ libion_server_a_SOURCES = \
 	rpcrawtransaction.cpp \
 	rpcserver.cpp \
 	rpcstashedsend.cpp \
-	script.cpp \
+  script/ismine.cpp \
+  script/script.cpp \
+  script/script_error.cpp \
 	spork.cpp \
 	stake.cpp \
 	stashedsend-relay.cpp \
@@ -260,12 +275,19 @@ libion_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libion_common_a_SOURCES = \
 	base58.cpp \
 	chainparams.cpp \
+  coins.cpp \
+  compressor.cpp \
   core_read.cpp \
   core_write.cpp \
 	key.cpp \
 	keystore.cpp \
 	netbase.cpp \
 	protocol.cpp \
+  script/interpreter.cpp \
+  script/sigcache.cpp \
+  script/sign.cpp \
+  script/standard.cpp \
+  script/standardkeystore.cpp \
 	$(ION_CORE_H)
 
 # util: shared between all executables.

@@ -13,6 +13,7 @@
 #include "main.h"
 #include "net.h"
 #include "keystore.h"
+#include "script/sign.h"
 #ifdef ENABLE_WALLET
 #include "wallet.h"
 #endif
@@ -284,7 +285,7 @@ Value createrawtransaction(const Array& params, bool fHelp)
         setAddress.insert(address);
 
         CScript scriptPubKey;
-        scriptPubKey.SetDestination(address.Get());
+        scriptPubKey = GetScriptForDestination(address.Get());
         CAmount nAmount = AmountFromValue(s.value_);
 
         CTxOut out(nAmount, scriptPubKey);

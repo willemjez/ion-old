@@ -5,12 +5,13 @@
 #ifndef ION_CORE_MEMUSAGE_H
 #define ION_CORE_MEMUSAGE_H
 
-#include "primitives/transaction.h"
-#include "primitives/block.h"
+//#include "primitives/transaction.h"
+//#include "primitives/block.h"
 #include "memusage.h"
 
 static inline size_t RecursiveDynamicUsage(const CScript& script) {
-    return memusage::DynamicUsage(*static_cast<const CScriptBase*>(&script));
+//    return memusage::DynamicUsage(*static_cast<const CScriptBase*>(&script));
+    return memusage::DynamicUsage(script);
 }
 
 static inline size_t RecursiveDynamicUsage(const COutPoint& out) {
@@ -18,10 +19,13 @@ static inline size_t RecursiveDynamicUsage(const COutPoint& out) {
 }
 
 static inline size_t RecursiveDynamicUsage(const CTxIn& in) {
-    size_t mem = RecursiveDynamicUsage(in.scriptSig) + RecursiveDynamicUsage(in.prevout) + memusage::DynamicUsage(in.scriptWitness.stack);
+//    size_t mem = RecursiveDynamicUsage(in.scriptSig) + RecursiveDynamicUsage(in.prevout) + memusage::DynamicUsage(in.scriptWitness.stack);
+    size_t mem = RecursiveDynamicUsage(in.scriptSig) + RecursiveDynamicUsage(in.prevout);
+/*
     for (std::vector<std::vector<unsigned char> >::const_iterator it = in.scriptWitness.stack.begin(); it != in.scriptWitness.stack.end(); it++) {
          mem += memusage::DynamicUsage(*it);
     }
+*/
     return mem;
 }
 
@@ -53,14 +57,20 @@ static inline size_t RecursiveDynamicUsage(const CMutableTransaction& tx) {
 
 static inline size_t RecursiveDynamicUsage(const CBlock& block) {
     size_t mem = memusage::DynamicUsage(block.vtx);
-    for (const auto& tx : block.vtx) {
-        mem += memusage::DynamicUsage(tx) + RecursiveDynamicUsage(*tx);
+//    for (const auto& tx : block.vtx) {
+//        mem += memusage::DynamicUsage(tx) + RecursiveDynamicUsage(*tx);
+//  Currently vtx does not point to CTransactionRef's but to CTransactions
+    for (const auto tx : block.vtx) {
+    mem += RecursiveDynamicUsage(tx);
     }
     return mem;
 }
 
+/*
+// vHave currently is a vector
 static inline size_t RecursiveDynamicUsage(const CBlockLocator& locator) {
     return memusage::DynamicUsage(locator.vHave);
 }
+*/
 
 #endif // ION_CORE_MEMUSAGE_H

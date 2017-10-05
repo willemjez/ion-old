@@ -2,7 +2,7 @@
 #include "masternode.h"
 #include "activemasternode.h"
 #include "stashedsend.h"
-#include "core.h"
+#include "primitives/transaction.h"
 #include "util.h"
 #include "amount.h"
 #include "addrman.h"
@@ -637,7 +637,7 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
         }
 
         CScript pubkeyScript;
-        pubkeyScript.SetDestination(pubkey.GetID());
+        pubkeyScript = GetScriptForDestination(pubkey.GetID());
 
         if(pubkeyScript.size() != 25) {
             LogPrintf("dsee - pubkey the wrong size\n");
@@ -646,7 +646,7 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
         }
 
         CScript pubkeyScript2;
-        pubkeyScript2.SetDestination(pubkey2.GetID());
+        pubkeyScript2 = GetScriptForDestination(pubkey2.GetID());
 
         if(pubkeyScript2.size() != 25) {
             LogPrintf("dsee - pubkey2 the wrong size\n");

@@ -6,7 +6,7 @@
 #ifndef STASHEDSEND_RELAY_H
 #define STASHEDSEND_RELAY_H
 
-#include "core.h"
+#include "primitives/transaction.h"
 #include "main.h"
 #include "activemasternode.h"
 #include "masternodeman.h"

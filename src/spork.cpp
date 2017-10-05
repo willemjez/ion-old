@@ -3,16 +3,15 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "spork.h"
 
 #include "sync.h"
 #include "net.h"
 #include "key.h"
 #include "util.h"
 #include "amount.h"
-#include "script.h"
 #include "base58.h"
 #include "protocol.h"
-#include "spork.h"
 #include "main.h"
 #include <boost/lexical_cast.hpp>
 

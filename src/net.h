@@ -10,7 +10,7 @@
 #endif
 
 #include "compat.h"
-#include "core.h"
+#include "primitives/transaction.h"
 #include "hash.h"
 #include "limitedmap.h"
 #include "mruset.h"

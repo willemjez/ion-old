@@ -2,7 +2,7 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/foreach.hpp>
 
-#include "script.h"
+#include "script/script.h"
 #include "key.h"
 
 using namespace std;
@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(GetSigOpCount)
     BOOST_CHECK_EQUAL(s1.GetSigOpCount(false), 21);
 
     CScript p2sh;
-    p2sh.SetDestination(s1.GetID());
+    p2sh = GetScriptForDestination(s1.GetID());
     CScript scriptSig;
     scriptSig << OP_0 << Serialize(s1);
     BOOST_CHECK_EQUAL(p2sh.GetSigOpCount(scriptSig), 3);
@@ -45,11 +45,11 @@ BOOST_AUTO_TEST_CASE(GetSigOpCount)
         keys.push_back(k.GetPubKey());
     }
     CScript s2;
-    s2.SetMultisig(1, keys);
+    s2 = GetScriptForMultisig(1, keys);
     BOOST_CHECK_EQUAL(s2.GetSigOpCount(true), 3);
     BOOST_CHECK_EQUAL(s2.GetSigOpCount(false), 20);
 
-    p2sh.SetDestination(s2.GetID());
+    p2sh = GetScriptForDestination(s2.GetID());
     BOOST_CHECK_EQUAL(p2sh.GetSigOpCount(true), 0);
     BOOST_CHECK_EQUAL(p2sh.GetSigOpCount(false), 0);
     CScript scriptSig2;
