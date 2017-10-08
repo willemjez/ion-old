@@ -1,0 +1,74 @@
+# Copyright (c) 2013-2016 The Bitcoin Core developers
+# Distributed under the MIT software license, see the accompanying
+# file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
+TESTS += test/test_ion
+bin_PROGRAMS += test/test_ion
+TEST_SRCDIR = test
+TEST_BINARY=test/test_ion$(EXEEXT)
+
+JSON_TEST_FILES = 
+
+RAW_TEST_FILES =
+
+GENERATED_TEST_FILES = $(JSON_TEST_FILES:.json=.json.h) $(RAW_TEST_FILES:.raw=.raw.h)
+
+# test_ion binary #
+ION_TESTS =\
+  test/base32_tests.cpp \
+  test/test_ion.cpp \
+  test/test_ion.h \
+  test/test_ion_main.cpp \
+  test/testutil.cpp \
+  test/testutil.h 
+
+test_test_ion_SOURCES = $(ION_TESTS) $(JSON_TEST_FILES) $(RAW_TEST_FILES)
+test_test_ion_CPPFLAGS = $(AM_CPPFLAGS) $(ION_INCLUDES) -I$(builddir)/test/ $(TESTDEFS) $(EVENT_CFLAGS)
+test_test_ion_LDADD = $(LIBION_SERVER) $(LIBION_CLI) $(LIBION_COMMON) $(LIBION_UTIL) $(LIBION_CONSENSUS) $(LIBION_CRYPTO) $(LIBUNIVALUE) \
+  $(LIBLEVELDB) $(LIBLEVELDB_SSE42) $(LIBMEMENV) $(BOOST_LIBS) $(BOOST_UNIT_TEST_FRAMEWORK_LIB) $(LIBSECP256K1) $(EVENT_LIBS) $(EVENT_PTHREADS_LIBS)
+test_test_ion_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+if ENABLE_WALLET
+test_test_ion_LDADD += $(LIBION_WALLET)
+endif
+
+test_test_ion_LDADD += $(LIBION_CONSENSUS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS)
+test_test_ion_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) -static
+
+if ENABLE_ZMQ
+test_test_ion_LDADD += $(ZMQ_LIBS)
+endif
+#
+
+nodist_test_test_ion_SOURCES = $(GENERATED_TEST_FILES)
+
+$(ION_TESTS): $(GENERATED_TEST_FILES)
+
+CLEAN_ION_TEST = test/*.gcda test/*.gcno $(GENERATED_TEST_FILES)
+
+CLEANFILES += $(CLEAN_ION_TEST)
+
+ion_test: $(TEST_BINARY)
+
+ion_test_check: $(TEST_BINARY) FORCE
+	$(MAKE) check-TESTS TESTS=$^
+
+ion_test_clean : FORCE
+	rm -f $(CLEAN_ION_TEST) $(test_test_ion_OBJECTS) $(TEST_BINARY)
+
+check-local:
+	@echo "Running test/util/ion-util-test.py..."
+	$(top_builddir)/test/util/ion-util-test.py
+	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) -C secp256k1 check
+if EMBEDDED_UNIVALUE
+	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) -C univalue check
+endif
+
+%.json.h: %.json
+	@$(MKDIR_P) $(@D)
+	@{ \
+	 echo "namespace json_tests{" && \
+	 echo "static unsigned const char $(*F)[] = {" && \
+	 $(HEXDUMP) -v -e '8/1 "0x%02x, "' -e '"\n"' $< | $(SED) -e 's/0x  ,//g' && \
+	 echo "};};"; \
+	} > "$@.new" && mv -f "$@.new" "$@"
+	@echo "Generated $@"
