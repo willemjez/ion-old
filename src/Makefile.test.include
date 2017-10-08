@@ -16,6 +16,7 @@ GENERATED_TEST_FILES = $(JSON_TEST_FILES:.json=.json.h) $(RAW_TEST_FILES:.raw=.r
 # test_ion binary #
 ION_TESTS =\
   test/base32_tests.cpp \
+  test/key_tests.cpp \
   test/test_ion.cpp \
   test/test_ion.h \
   test/test_ion_main.cpp \
