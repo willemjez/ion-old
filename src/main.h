@@ -551,21 +551,6 @@ typedef std::shared_ptr<const CTransaction> CTransactionRef;
 static inline CTransactionRef MakeTransactionRef() { return std::make_shared<const CTransaction>(); }
 template <typename Tx> static inline CTransactionRef MakeTransactionRef(Tx&& txIn) { return std::make_shared<const CTransaction>(std::forward<Tx>(txIn)); }
 
-/** wrapper for CTxOut that provides a more compact serialization */
-class CTxOutCompressor
-{
-private:
-    CTxOut &txout;
-public:
-    CTxOutCompressor(CTxOut &txoutIn) : txout(txoutIn) { }
-
-    IMPLEMENT_SERIALIZE(
-        READWRITE(VARINT(txout.nValue));
-        CScriptCompressor cscript(REF(txout.scriptPubKey));
-        READWRITE(cscript);
-    )
-};
-
 /** Check for standard transaction types
     @param[in] mapInputs    Map of previous transactions that have outputs we're spending
     @return True if all inputs (scriptSigs) use only standard transaction forms

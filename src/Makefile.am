@@ -90,6 +90,7 @@ ION_CORE_H = \
   clientversion.h \
   coincontrol.h \
   compat.h \
+  compressor.h \
   core.h \
   core_io.h  \
   core_memusage.h \
@@ -260,6 +261,7 @@ libion_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libion_common_a_SOURCES = \
 	base58.cpp \
 	chainparams.cpp \
+  compressor.cpp \
   core_read.cpp \
   core_write.cpp \
 	key.cpp \
@@ -457,4 +459,3 @@ endif
 if ENABLE_QT
 include Makefile.qt.include
 endif
-
