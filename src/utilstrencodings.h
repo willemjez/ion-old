@@ -35,7 +35,6 @@
 #define PAIRTYPE(t1, t2)    std::pair<t1, t2>
 
 
-
 std::vector<unsigned char> DecodeBase64(const char* p, bool* pfInvalid = NULL);
 std::string DecodeBase64(const std::string& str);
 std::string EncodeBase64(const unsigned char* pch, size_t len);

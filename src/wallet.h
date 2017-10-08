@@ -19,6 +19,7 @@
 #include "script.h"
 #include "ui_interface.h"
 #include "util.h"
+#include "utilstrencodings.h"
 #include "amount.h"
 #include "stealth.h"
 

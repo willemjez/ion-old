@@ -8,6 +8,8 @@
 
 #include "serialize.h"
 
+#include "utilstrencodings.h"
+
 #include <stdlib.h>
 #include <string>
 
