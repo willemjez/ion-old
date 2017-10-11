@@ -392,8 +392,7 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(WalletModelTransaction &tran
                         printf("ephem_pubkey %" PRIszu": %s\n", ephem_pubkey.size(), HexStr(ephem_pubkey).c_str());
                     };
 
-                    CScript scriptPubKey;
-                    scriptPubKey.SetDestination(addrTo.Get());
+                    CScript scriptPubKey = GetScriptForDestination(addrTo.Get());
 
                     vecSend.push_back(make_pair(scriptPubKey, rcp.amount));
 
@@ -442,8 +441,7 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(WalletModelTransaction &tran
                 } // else drop through to normal
             }
 
-            CScript scriptPubKey;
-            scriptPubKey.SetDestination(CIonAddress(sAddr).Get());
+            CScript scriptPubKey = GetScriptForDestination(CIonAddress(sAddr).Get());
             vecSend.push_back(make_pair(scriptPubKey, rcp.amount));
 
             if (rcp.narration.length() > 0)

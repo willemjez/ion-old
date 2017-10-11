@@ -507,8 +507,7 @@ Value masternode(const Array& params, bool fHelp)
         CMasternode* winner = mnodeman.GetCurrentMasterNode(1);
         if(winner) {
             Object obj;
-            CScript pubkey;
-            pubkey.SetDestination(winner->pubkey.GetID());
+            CScript pubkey = GetScriptForDestination(winner->pubkey.GetID());
             CTxDestination address1;
             ExtractDestination(pubkey, address1);
             CIonAddress address2(address1);
@@ -816,8 +815,7 @@ Value masternodelist(const Array& params, bool fHelp)
                 }
                 obj.push_back(Pair(strVin,       strOut.c_str()));
             } else if (strMode == "full") {
-                CScript pubkey;
-                pubkey.SetDestination(mn.pubkey.GetID());
+                CScript pubkey = GetScriptForDestination(mn.pubkey.GetID());
                 CTxDestination address1;
                 ExtractDestination(pubkey, address1);
                 CIonAddress address2(address1);
@@ -847,8 +845,7 @@ Value masternodelist(const Array& params, bool fHelp)
                     strVin.find(strFilter) == string::npos) continue;
                 obj.push_back(Pair(strVin,       (int64_t)mn.protocolVersion));
             } else if (strMode == "pubkey") {
-                CScript pubkey;
-                pubkey.SetDestination(mn.pubkey.GetID());
+                CScript pubkey = GetScriptForDestination(mn.pubkey.GetID());
                 CTxDestination address1;
                 ExtractDestination(pubkey, address1);
                 CIonAddress address2(address1);

@@ -636,8 +636,7 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
             return;
         }
 
-        CScript pubkeyScript;
-        pubkeyScript.SetDestination(pubkey.GetID());
+        CScript pubkeyScript = GetScriptForDestination(pubkey.GetID());
 
         if(pubkeyScript.size() != 25) {
             LogPrintf("dsee - pubkey the wrong size\n");
@@ -645,8 +644,7 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
             return;
         }
 
-        CScript pubkeyScript2;
-        pubkeyScript2.SetDestination(pubkey2.GetID());
+        CScript pubkeyScript2 = GetScriptForDestination(pubkey2.GetID());
 
         if(pubkeyScript2.size() != 25) {
             LogPrintf("dsee - pubkey2 the wrong size\n");

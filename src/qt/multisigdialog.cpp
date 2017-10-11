@@ -271,8 +271,7 @@ void MultisigDialog::on_createTransactionButton_clicked()
             {
                 SendCoinsRecipient recipient = entry->getValue();
                 CIonAddress address(recipient.address.toStdString());
-                CScript scriptPubKey;
-                scriptPubKey.SetDestination(address.Get());
+                CScript scriptPubKey = GetScriptForDestination(address.Get());
                 CAmount amount = recipient.amount;
                 CTxOut output(amount, scriptPubKey);
                 transaction.vout.push_back(output);

@@ -8,8 +8,6 @@
 #include <secp256k1.h>
 #include <secp256k1_recovery.h>
 
-CScriptID::CScriptID(const CScript& in) : uint160(Hash160(in.begin(), in.end())) {}
-
 namespace
 {
 /* Global secp256k1_context object used for verification. */

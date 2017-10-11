@@ -14,6 +14,7 @@
 #include <boost/variant.hpp>
 
 class CScript;
+class CScriptID;
 
 /** A virtual base class for key stores */
 class CKeyStore

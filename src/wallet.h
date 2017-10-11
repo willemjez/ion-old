@@ -17,6 +17,7 @@
 #include "key.h"
 #include "keystore.h"
 //#include "script.h"
+#include "script/standard.h"
 #include "script/ismine.h"
 #include "ui_interface.h"
 #include "util.h"

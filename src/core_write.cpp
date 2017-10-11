@@ -8,7 +8,7 @@
 #include "main.h"
 //#include "primitives/transaction.h"
 #include "script.h"
-//#include "script/standard.h"
+#include "script/standard.h"
 #include "serialize.h"
 //#include "streams.h"
 #include <univalue.h>

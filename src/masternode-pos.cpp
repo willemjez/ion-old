@@ -192,8 +192,7 @@ bool CMasternodeScanningError::SignatureValid()
         return false;
     }
 
-    CScript pubkey;
-    pubkey.SetDestination(pmn->pubkey2.GetID());
+    CScript pubkey = GetScriptForDestination(pmn->pubkey2.GetID());
     CTxDestination address1;
     ExtractDestination(pubkey, address1);
     CIonAddress address2(address1);
@@ -221,8 +220,7 @@ bool CMasternodeScanningError::Sign()
         return false;
     }
 
-    CScript pubkey;
-    pubkey.SetDestination(pubkey2.GetID());
+    CScript pubkey = GetScriptForDestination(pubkey2.GetID());
     CTxDestination address1;
     ExtractDestination(pubkey, address1);
     CIonAddress address2(address1);
