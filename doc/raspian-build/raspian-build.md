@@ -16,7 +16,7 @@ Create the new packages
 -----------------------
 dpkg-source -x db4.8_4.8.30-zesty1.dsc
 
-cd db4.8
+cd db4.8_4.8.30
 
 edit the debian/changelog file and change zesty to the version of raspian you are running we will use stretch in this example
 
