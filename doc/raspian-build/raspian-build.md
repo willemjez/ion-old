@@ -16,11 +16,11 @@ Create the new packages
 -----------------------
 dpkg-source -x db4.8_4.8.30-zesty1.dsc
 
-cd db4.8_4.8.30
+cd db4.8-4.8.30
 
 edit the debian/changelog file and change zesty to the version of raspian you are running we will use stretch in this example
 
-![](changelog.png)
+![](raspian-images/changelog.png)
 
 now build the db4.8 packages
 
@@ -67,10 +67,10 @@ sudo checkinstall
 Enter a name such as Ioncoin in this example
 
 
-![](checkinstall1.png)
+![](raspian-images/checkinstall1.png)
 
 Enter the information for the package
 
-![](checkinstall2.png)
+![](raspian-images/checkinstall2.png)
 
 After hitting enter the package will be installed and a backup package created for re-installation/archival purposes
