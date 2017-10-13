@@ -541,13 +541,10 @@ bool AppInit2(boost::thread_group& threadGroup)
     //ignore masternodes below protocol version
     nMasternodeMinProtocol = GetArg("-masternodeminprotocol", MIN_POOL_PEER_PROTO_VERSION);
 
-    if (fDaemon)
-        fprintf(stdout, "Ion server starting\n"); 
+    if (fDaemon) fprintf(stdout, "Ion server starting\n"); 
 
-	if (TestNet()){
-		LogPrintf("Starting testnet\n");
-	}
-
+    if (TestNet()) LogPrintf("Starting testnet\n");
+	
     int64_t nStart;
 
     // ********************************************************* Step 5: Backup wallet and verify wallet database integrity

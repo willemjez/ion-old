@@ -335,7 +335,6 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(WalletModelTransaction &tran
     {
         LOCK2(cs_main, wallet->cs_wallet);
 
-        CWalletTx *newTx = transaction.getTransaction();
         CWalletTx wtx;
 
 

@@ -85,18 +85,6 @@ static bool IsCompressedOrUncompressedPubKey(const valtype &vchPubKey) {
     return true;
 }
 
-bool static IsCompressedPubKey(const valtype &vchPubKey) {
-    if (vchPubKey.size() != 33) {
-        //  Non-canonical public key: invalid length for compressed key
-        return false;
-    }
-    if (vchPubKey[0] != 0x02 && vchPubKey[0] != 0x03) {
-        //  Non-canonical public key: invalid prefix for compressed key
-        return false;
-    }
-    return true;
-}
-
 bool static IsLowDERSignature(const valtype &vchSig) {
     if (!IsDERSignature(vchSig)) {
         return false;
