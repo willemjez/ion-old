@@ -10,6 +10,7 @@
 #include "masternodeman.h"
 #include "instantx.h"
 #include "script/sign.h"
+#include "script/interpreter.h"
 #include "ui_interface.h"
 
 #include <boost/algorithm/string/replace.hpp>

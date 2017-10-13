@@ -124,6 +124,7 @@ ION_CORE_H = \
   rpcprotocol.h \
   rpcserver.h \
   script.h \
+  script/interpreter.h \
   script/ismine.h \
   script/script_error.h \
   script/sigcache.h \
@@ -203,6 +204,7 @@ libion_server_a_SOURCES = \
 	rpcserver.cpp \
 	rpcstashedsend.cpp \
 	script.cpp \
+  script/interpreter.cpp \
   script/ismine.cpp \
   script/script_error.cpp \
 	spork.cpp \

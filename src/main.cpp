@@ -20,6 +20,7 @@
 #include "masternodeman.h"
 #include "masternode-payments.h"
 #include "spork.h"
+#include "script/interpreter.h"
 #include "util.h"
 
 #include <boost/algorithm/string/replace.hpp>

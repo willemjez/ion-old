@@ -6,6 +6,7 @@
 #include "script/sign.h"
 #include "script.h"
 #include "script/sigcache.h"
+#include "script/interpreter.h"
 
 #include "main.h"
 

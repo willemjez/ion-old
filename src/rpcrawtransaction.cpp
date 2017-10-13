@@ -14,6 +14,7 @@
 #include "net.h"
 #include "keystore.h"
 #include "script/sign.h"
+#include "script/interpreter.h"
 #ifdef ENABLE_WALLET
 #include "wallet.h"
 #endif
