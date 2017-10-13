@@ -126,6 +126,7 @@ ION_CORE_H = \
   script.h \
   script/ismine.h \
   script/script_error.h \
+  script/sigcache.h \
   script/sign.h \
   script/standard.h \
   serialize.h \
@@ -274,6 +275,7 @@ libion_common_a_SOURCES = \
 	keystore.cpp \
 	netbase.cpp \
 	protocol.cpp \
+  script/sigcache.cpp \
   script/sign.cpp \
   script/standard.cpp \
 	$(ION_CORE_H)

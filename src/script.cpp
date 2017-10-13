@@ -13,6 +13,7 @@ using namespace boost;
 #include "script.h"
 #include "script/standard.h"
 #include "script/sign.h"
+#include "script/sigcache.h"
 #include "keystore.h"
 #include "pubkey.h"
 #include "main.h"
