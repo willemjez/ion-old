@@ -23,6 +23,7 @@
 #include "chainparams.h"
 #include "main.h"
 #include "proofs.h"
+#include "script/sign.h"
 
 #include <boost/algorithm/string/replace.hpp>
 
