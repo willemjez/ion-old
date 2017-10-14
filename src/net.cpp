@@ -2034,12 +2034,9 @@ bool CAddrDB::Read(CAddrMan& addr)
 
     // use file size to size memory buffer
     uint64_t fileSize = boost::filesystem::file_size(pathAddr);
-    uint64_t dataSize = fileSize - sizeof(uint256);
     // Don't try to resize to a negative number if file is small
-    if (fileSize >= sizeof(uint256))
-        dataSize = fileSize - sizeof(uint256);
-    if ( dataSize < 0 )
-        dataSize = 0;
+    uint64_t dataSize = fileSize >= sizeof(uint256) ? fileSize - sizeof(uint256) : 0;
+
     vector<unsigned char> vchData;
     vchData.resize(dataSize);
     uint256 hashIn;
