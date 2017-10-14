@@ -84,6 +84,7 @@ ION_CORE_H = \
   amount.h \
   arith_uint256.h \
   base58.h \
+  chain.h \
   chainparams.h  \
   chainparamsseeds.h \
   checkpoints.h \
@@ -116,6 +117,7 @@ ION_CORE_H = \
   net.h \
   netbase.h \
   prevector.h \
+  primitives/block.h \
   proofs.h \
   protocol.h \
   pubkey.h \
@@ -169,6 +171,7 @@ libion_server_a_SOURCES = \
 	alert.cpp \
 	allocators.cpp \
 	amount.cpp \
+  chain.cpp \
 	checkpoints.cpp \
 	core.cpp \
 	crypter.cpp \
@@ -195,6 +198,7 @@ libion_server_a_SOURCES = \
 	masternodeman.cpp \
 	net.cpp \
 	noui.cpp \
+  primitives/block.cpp \
 	proofs.cpp \
 	pubkey.cpp \
 	rpcblockchain.cpp \

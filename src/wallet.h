@@ -12,6 +12,7 @@
 
 #include <stdlib.h>
 
+#include "chain.h"
 #include "crypter.h"
 #include "main.h"
 #include "key.h"

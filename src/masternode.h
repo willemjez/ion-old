@@ -5,6 +5,7 @@
 #ifndef MASTERNODE_H
 #define MASTERNODE_H
 
+#include "chain.h"
 #include "uint256.h"
 #include "sync.h"
 #include "net.h"

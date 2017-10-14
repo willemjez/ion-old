@@ -6,6 +6,7 @@
 #ifndef ION_LEVELDB_H
 #define ION_LEVELDB_H
 
+#include "chain.h"
 #include "main.h"
 
 #include <map>

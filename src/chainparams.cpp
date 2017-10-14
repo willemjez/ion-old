@@ -9,6 +9,7 @@
 
 #include "chainparams.h"
 #include "main.h"
+#include "primitives/block.h"
 #include "util.h"
 #include "amount.h"
 

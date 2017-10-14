@@ -83,8 +83,8 @@ CCriticalSection cs_nLastNodeId;
 static CSemaphore *semOutbound = NULL;
 
 // Signals for message handling
-static CNodeSignals g_signals;
-CNodeSignals& GetNodeSignals() { return g_signals; }
+static CNodeSignals nodeSignals;
+CNodeSignals& GetNodeSignals() { return nodeSignals; }
 
 void AddOneShot(string strDest)
 {
@@ -1598,7 +1598,7 @@ void ThreadMessageHandler()
                 TRY_LOCK(pnode->cs_vRecvMsg, lockRecv);
                 if (lockRecv)
                 {
-                    if (!g_signals.ProcessMessages(pnode))
+                    if (!nodeSignals.ProcessMessages(pnode))
                         pnode->CloseSocketDisconnect();
 
                     if (pnode->nSendSize < SendBufferSize())
@@ -1616,7 +1616,7 @@ void ThreadMessageHandler()
             {
                 TRY_LOCK(pnode->cs_vSend, lockSend);
                 if (lockSend)
-                    g_signals.SendMessages(pnode, pnode == pnodeTrickle);
+                    nodeSignals.SendMessages(pnode, pnode == pnodeTrickle);
             }
             boost::this_thread::interruption_point();
         }
