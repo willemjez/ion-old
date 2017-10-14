@@ -5,7 +5,7 @@
 #ifndef STASHEDSEND_H
 #define STASHEDSEND_H
 
-#include "core.h"
+#include "primitives/transaction.h"
 #include "main.h"
 #include "sync.h"
 #include "activemasternode.h"

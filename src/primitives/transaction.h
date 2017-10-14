@@ -1,15 +1,14 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2013 The Bitcoin developers
+// Copyright (c) 2009-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-#ifndef ION_CORE_H
-#define ION_CORE_H
 
-#include "uint256.h"
-#include "serialize.h"
+#ifndef ION_PRIMITIVES_TRANSACTION_H
+#define ION_PRIMITIVES_TRANSACTION_H
+
 #include "script.h"
-
-#include <stdio.h>
+#include "serialize.h"
+#include "uint256.h"
 
 class CScript;
 class CTransaction;
@@ -187,4 +186,4 @@ public:
     std::string ToString() const;
 };
 
-#endif
+#endif // ION_PRIMITIVES_TRANSACTION_H

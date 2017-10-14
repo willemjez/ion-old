@@ -92,7 +92,6 @@ ION_CORE_H = \
   coincontrol.h \
   compat.h \
   compressor.h \
-  core.h \
   core_io.h  \
   core_memusage.h \
   crypter.h \
@@ -118,6 +117,7 @@ ION_CORE_H = \
   netbase.h \
   prevector.h \
   primitives/block.h \
+  primitives/transaction.h \
   proofs.h \
   protocol.h \
   pubkey.h \
@@ -173,7 +173,6 @@ libion_server_a_SOURCES = \
 	amount.cpp \
   chain.cpp \
 	checkpoints.cpp \
-	core.cpp \
 	crypter.cpp \
 	ecwrapper.cpp \
 	hash.cpp \
@@ -199,6 +198,7 @@ libion_server_a_SOURCES = \
 	net.cpp \
 	noui.cpp \
   primitives/block.cpp \
+  primitives/transaction.cpp \
 	proofs.cpp \
 	pubkey.cpp \
 	rpcblockchain.cpp \

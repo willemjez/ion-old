@@ -6,7 +6,7 @@
 #ifndef ION_SCRIPT_H
 #define ION_SCRIPT_H
 
-#include "core.h"
+#include "primitives/transaction.h"
 #include "script.h"
 #include "serialize.h"
 

@@ -2,7 +2,7 @@
 #include "masternode.h"
 #include "activemasternode.h"
 #include "stashedsend.h"
-#include "core.h"
+#include "primitives/transaction.h"
 #include "util.h"
 #include "amount.h"
 #include "addrman.h"

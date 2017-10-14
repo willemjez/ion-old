@@ -6,7 +6,7 @@
 #define ION_MAIN_H
 
 #include "proofs.h"
-#include "core.h" 
+#include "primitives/transaction.h" 
 #include "sync.h"
 #include "txmempool.h"
 #include "net.h"

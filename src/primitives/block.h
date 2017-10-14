@@ -7,7 +7,7 @@
 #define ION_PRIMITIVES_BLOCK_H
 
 //#include "primitives/transaction.h"
-#include "core.h"
+#include "primitives/transaction.h"
 #include "main.h"
 #include "serialize.h"
 #include "uint256.h"

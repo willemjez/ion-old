@@ -7,7 +7,7 @@
 #define ION_SCRIPT_INTERPRETER_H
 
 #include "script_error.h"
-//#include "core.h"
+//#include "primitives/transaction.h"
 
 #include <vector>
 #include <stdint.h>
