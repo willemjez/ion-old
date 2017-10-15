@@ -7,7 +7,7 @@
 
 #include "chain.h"
 #include "checkpoints.h"
-#include "concensus/concensus.h"
+#include "consensus/consensus.h"
 #include "hash.h"
 #include "instantx.h"
 #include "main.h"

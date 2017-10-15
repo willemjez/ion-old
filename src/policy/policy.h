@@ -6,7 +6,7 @@
 #ifndef ION_POLICY_POLICY_H
 #define ION_POLICY_POLICY_H
 
-#include "concensus/concensus.h"
+#include "consensus/consensus.h"
 #include "feerate.h"
 #include "script/interpreter.h"
 #include "script/standard.h"

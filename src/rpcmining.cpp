@@ -6,7 +6,7 @@
 
 #include "rpcserver.h"
 #include "chainparams.h"
-#include "concensus/concensus.h"
+#include "consensus/consensus.h"
 #include "main.h"
 #include "proofs.h"
 #include "db.h"
