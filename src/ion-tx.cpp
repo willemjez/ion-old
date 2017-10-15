@@ -99,6 +99,73 @@ static int AppInitRawTx(int argc, char* argv[])
     return CONTINUE_EXECUTION;
 }
 
+static void RegisterSetJson(const std::string& key, const std::string& rawJson)
+{
+    UniValue val;
+    if (!val.read(rawJson)) {
+        std::string strErr = "Cannot parse JSON for key " + key;
+        throw std::runtime_error(strErr);
+    }
+
+    registers[key] = val;
+}
+
+static void RegisterSet(const std::string& strInput)
+{
+    // separate NAME:VALUE in string
+    size_t pos = strInput.find(':');
+    if ((pos == std::string::npos) ||
+        (pos == 0) ||
+        (pos == (strInput.size() - 1)))
+        throw std::runtime_error("Register input requires NAME:VALUE");
+
+    std::string key = strInput.substr(0, pos);
+    std::string valStr = strInput.substr(pos + 1, std::string::npos);
+
+    RegisterSetJson(key, valStr);
+}
+
+static void RegisterLoad(const std::string& strInput)
+{
+    // separate NAME:FILENAME in string
+    size_t pos = strInput.find(':');
+    if ((pos == std::string::npos) ||
+        (pos == 0) ||
+        (pos == (strInput.size() - 1)))
+        throw std::runtime_error("Register load requires NAME:FILENAME");
+
+    std::string key = strInput.substr(0, pos);
+    std::string filename = strInput.substr(pos + 1, std::string::npos);
+
+    FILE *f = fopen(filename.c_str(), "r");
+    if (!f) {
+        std::string strErr = "Cannot open file " + filename;
+        throw std::runtime_error(strErr);
+    }
+
+    // load file chunks into one big buffer
+    std::string valStr;
+    while ((!feof(f)) && (!ferror(f))) {
+        char buf[4096];
+        int bread = fread(buf, 1, sizeof(buf), f);
+        if (bread <= 0)
+            break;
+
+        valStr.insert(valStr.size(), buf, bread);
+    }
+
+    int error = ferror(f);
+    fclose(f);
+
+    if (error) {
+        std::string strErr = "Error reading file " + filename;
+        throw std::runtime_error(strErr);
+    }
+
+    // evaluate as JSON buffer register
+    RegisterSetJson(key, valStr);
+}
+
 static CAmount ExtractAndValidateValue(const std::string& strValue)
 {
     CAmount value;
@@ -229,6 +296,142 @@ static void MutateTxAddOutPubKey(CMutableTransaction& tx, const std::string& str
     tx.vout.push_back(txout);
 }
 
+static void MutateTxAddOutMultiSig(CMutableTransaction& tx, const std::string& strInput)
+{
+    // Separate into VALUE:REQUIRED:NUMKEYS:PUBKEY1:PUBKEY2:....[:FLAGS]
+    std::vector<std::string> vStrInputParts;
+    boost::split(vStrInputParts, strInput, boost::is_any_of(":"));
+
+    // Check that there are enough parameters
+    if (vStrInputParts.size()<3)
+        throw std::runtime_error("Not enough multisig parameters");
+
+    // Extract and validate VALUE
+    CAmount value = ExtractAndValidateValue(vStrInputParts[0]);
+
+    // Extract REQUIRED
+    uint32_t required = stoul(vStrInputParts[1]);
+
+    // Extract NUMKEYS
+    uint32_t numkeys = stoul(vStrInputParts[2]);
+
+    // Validate there are the correct number of pubkeys
+    if (vStrInputParts.size() < numkeys + 3)
+        throw std::runtime_error("incorrect number of multisig pubkeys");
+
+    if (required < 1 || required > 20 || numkeys < 1 || numkeys > 20 || numkeys < required)
+        throw std::runtime_error("multisig parameter mismatch. Required " \
+                            + std::to_string(required) + " of " + std::to_string(numkeys) + "signatures.");
+
+    // extract and validate PUBKEYs
+    std::vector<CPubKey> pubkeys;
+    for(int pos = 1; pos <= int(numkeys); pos++) {
+        CPubKey pubkey(ParseHex(vStrInputParts[pos + 2]));
+        if (!pubkey.IsFullyValid())
+            throw std::runtime_error("invalid TX output pubkey");
+        pubkeys.push_back(pubkey);
+    }
+
+    // Extract FLAGS
+//    bool bSegWit = false;
+    bool bScriptHash = false;
+    if (vStrInputParts.size() == numkeys + 4) {
+        std::string flags = vStrInputParts.back();
+//        bSegWit = (flags.find("W") != std::string::npos);
+        bScriptHash = (flags.find("S") != std::string::npos);
+    }
+    else if (vStrInputParts.size() > numkeys + 4) {
+        // Validate that there were no more parameters passed
+        throw std::runtime_error("Too many parameters");
+    }
+
+    CScript scriptPubKey = GetScriptForMultisig(required, pubkeys);
+
+/*
+    if (bSegWit) {
+        for (CPubKey& pubkey : pubkeys) {
+            if (!pubkey.IsCompressed()) {
+                throw std::runtime_error("Uncompressed pubkeys are not useable for SegWit outputs");
+            }
+        }
+        // Call GetScriptForWitness() to build a P2WSH scriptPubKey
+        scriptPubKey = GetScriptForWitness(scriptPubKey);
+    }
+*/
+    if (bScriptHash) {
+        // Get the ID for the script, and then construct a P2SH destination for it.
+        scriptPubKey = GetScriptForDestination(CScriptID(scriptPubKey));
+    }
+
+    // construct TxOut, append to transaction output list
+    CTxOut txout(value, scriptPubKey);
+    tx.vout.push_back(txout);
+}
+
+static void MutateTxAddOutData(CMutableTransaction& tx, const std::string& strInput)
+{
+    CAmount value = 0;
+
+    // separate [VALUE:]DATA in string
+    size_t pos = strInput.find(':');
+
+    if (pos==0)
+        throw std::runtime_error("TX output value not specified");
+
+    if (pos != std::string::npos) {
+        // Extract and validate VALUE
+        value = ExtractAndValidateValue(strInput.substr(0, pos));
+    }
+
+    // extract and validate DATA
+    std::string strData = strInput.substr(pos + 1, std::string::npos);
+
+    if (!IsHex(strData))
+        throw std::runtime_error("invalid TX output data");
+
+    std::vector<unsigned char> data = ParseHex(strData);
+
+    CTxOut txout(value, CScript() << OP_RETURN << data);
+    tx.vout.push_back(txout);
+}
+
+static void MutateTxAddOutScript(CMutableTransaction& tx, const std::string& strInput)
+{
+    // separate VALUE:SCRIPT[:FLAGS]
+    std::vector<std::string> vStrInputParts;
+    boost::split(vStrInputParts, strInput, boost::is_any_of(":"));
+    if (vStrInputParts.size() < 2)
+        throw std::runtime_error("TX output missing separator");
+
+    // Extract and validate VALUE
+    CAmount value = ExtractAndValidateValue(vStrInputParts[0]);
+
+    // extract and validate script
+    std::string strScript = vStrInputParts[1];
+    CScript scriptPubKey = ParseScript(strScript);
+
+    // Extract FLAGS
+//    bool bSegWit = false;
+    bool bScriptHash = false;
+    if (vStrInputParts.size() == 3) {
+        std::string flags = vStrInputParts.back();
+//        bSegWit = (flags.find("W") != std::string::npos);
+        bScriptHash = (flags.find("S") != std::string::npos);
+    }
+/*
+    if (bSegWit) {
+        scriptPubKey = GetScriptForWitness(scriptPubKey);
+    }
+*/
+    if (bScriptHash) {
+        scriptPubKey = GetScriptForDestination(CScriptID(scriptPubKey));
+    }
+
+    // construct TxOut, append to transaction output list
+    CTxOut txout(value, scriptPubKey);
+    tx.vout.push_back(txout);
+}
+
 static void MutateTxDelInput(CMutableTransaction& tx, const std::string& strInIdx)
 {
     // parse requested deletion index
@@ -298,21 +501,19 @@ static void MutateTx(CMutableTransaction& tx, const std::string& command, const 
     else if (command == "outpubkey") {
     if (!ecc) { ecc.reset(new Secp256k1Init()); }
     MutateTxAddOutPubKey(tx, commandVal);
-    } 
-/*
-    else if (command == "outmultisig") {
+    } else if (command == "outmultisig") {
     if (!ecc) { ecc.reset(new Secp256k1Init()); }
     MutateTxAddOutMultiSig(tx, commandVal);
     } else if (command == "outscript")
     MutateTxAddOutScript(tx, commandVal);
     else if (command == "outdata")
     MutateTxAddOutData(tx, commandVal);
-    
+/*    
     else if (command == "sign") {
     if (!ecc) { ecc.reset(new Secp256k1Init()); }
     MutateTxSign(tx, commandVal);
     }
-    
+*/    
     else if (command == "load")
     RegisterLoad(commandVal);
     
@@ -321,7 +522,7 @@ static void MutateTx(CMutableTransaction& tx, const std::string& command, const 
     
     else
         throw std::runtime_error("unknown command");
-*/
+
 }
 
 
