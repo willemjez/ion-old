@@ -6,6 +6,7 @@
 #define ION_MAIN_H
 
 #include "proofs.h"
+#include "policy/policy.h"
 #include "primitives/transaction.h" 
 #include "sync.h"
 #include "txmempool.h"
@@ -32,30 +33,13 @@ class CNode;
 class CReserveKey;
 class CWallet;
 
-/** The maximum allowed size for a serialized block, in bytes (network rule) */
-static const unsigned int MAX_BLOCK_SIZE = 20000000;
-/** The maximum size for mined blocks */
-static const unsigned int MAX_BLOCK_SIZE_GEN = MAX_BLOCK_SIZE/2;
-/** Default for -blockprioritysize, maximum space for zero/low-fee transactions **/
-static const unsigned int DEFAULT_BLOCK_PRIORITY_SIZE = 50000;
-/** The maximum size for transactions we're willing to relay/mine **/
-static const unsigned int MAX_STANDARD_TX_SIZE = MAX_BLOCK_SIZE_GEN/5;
-/** The maximum allowed number of signature check operations in a block (network rule) */
-static const unsigned int MAX_BLOCK_SIGOPS = MAX_BLOCK_SIZE/50;
-/** Maxiumum number of signature check operations in an IsStandard() P2SH script */
-static const unsigned int MAX_P2SH_SIGOPS = 15;
-/** The maximum number of sigops we're willing to relay/mine in a single tx */
-static const unsigned int MAX_TX_SIGOPS = MAX_BLOCK_SIGOPS/5;
+// Will go to net_processing.h
 /** The maximum number of orphan transactions kept in memory */
 static const unsigned int MAX_ORPHAN_TRANSACTIONS = MAX_BLOCK_SIZE/100;
 /** Default for -maxorphanblocks, maximum number of orphan blocks kept in memory */
 static const unsigned int DEFAULT_MAX_ORPHAN_BLOCKS = 10000;
-/** Fees smaller than this (in satoshi) are considered zero fee (for transaction creation) */
-static const int64_t MIN_TX_FEE = (0.001*COIN);
-/** Fees smaller than this (in satoshi) are considered zero fee (for relaying) */
-static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
-/** Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp. */
-static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
+
+// Will go to validation.h
 /** Number of blocks that can be requested at any given time from a single peer. */
 static const int MAX_BLOCKS_IN_TRANSIT_PER_PEER = 128;
 /** Timeout in seconds before considering a block download peer unresponsive. */
@@ -569,13 +553,6 @@ typedef std::shared_ptr<const CTransaction> CTransactionRef;
 static inline CTransactionRef MakeTransactionRef() { return std::make_shared<const CTransaction>(); }
 template <typename Tx> static inline CTransactionRef MakeTransactionRef(Tx&& txIn) { return std::make_shared<const CTransaction>(std::forward<Tx>(txIn)); }
 
-/** Check for standard transaction types
-    @param[in] mapInputs    Map of previous transactions that have outputs we're spending
-    @return True if all inputs (scriptSigs) use only standard transaction forms
-    @see CTransaction::FetchInputs
-*/
-bool AreInputsStandard(const CTransaction& tx, const MapPrevTx& mapInputs);
-
 /** Count ECDSA signature operations the old-fashioned (pre-0.6) way
     @return number of sigops this transaction's outputs will produce when spent
     @see CTransaction::FetchInputs
@@ -597,14 +574,7 @@ inline bool AllowFree(double dPriority)
     return dPriority > COIN * 576 / 250;
 }
 
-/** Check for standard transaction types
-    @return True if all outputs (scriptPubKeys) use only standard transaction forms
-*/
-bool IsStandardTx(const CTransaction& tx, std::string& reason);
-
 bool IsFinalTx(const CTransaction &tx, int nBlockHeight = 0, int64_t nBlockTime = 0);
-
-
 
 /** A transaction with a merkle branch linking it to the block chain. */
 class CMerkleTx : public CTransaction

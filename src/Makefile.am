@@ -92,6 +92,7 @@ ION_CORE_H = \
   coincontrol.h \
   compat.h \
   compressor.h \
+  concensus/concensus.h \
   core_io.h  \
   core_memusage.h \
   crypter.h \
@@ -116,6 +117,7 @@ ION_CORE_H = \
   net.h \
   netbase.h \
   policy/feerate.h \
+  policy/policy.h \
   prevector.h \
   primitives/block.h \
   primitives/transaction.h \
@@ -198,6 +200,7 @@ libion_server_a_SOURCES = \
 	net.cpp \
 	noui.cpp \
 	policy/feerate.cpp \
+  policy/policy.cpp \
   primitives/block.cpp \
   primitives/transaction.cpp \
 	proofs.cpp \

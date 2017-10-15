@@ -31,6 +31,9 @@ class CTransaction;
 static const unsigned int MAX_SCRIPT_ELEMENT_SIZE = 520; // bytes
 static const unsigned int MAX_OP_RETURN_RELAY = 40;      // bytes
 
+/** Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp. */
+static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
+
 template <typename T>
 std::vector<unsigned char> ToByteVector(const T& in)
 {
@@ -38,24 +41,6 @@ std::vector<unsigned char> ToByteVector(const T& in)
 }
 
 std::string ValueString(const std::vector<unsigned char>& vch);
-
-// Mandatory script verification flags that all new blocks must comply with for
-// them to be valid. (but old blocks may not comply with)
-//
-// Failing one of these tests may trigger a DoS ban - see ConnectInputs() for
-// details.
-static const unsigned int MANDATORY_SCRIPT_VERIFY_FLAGS = SCRIPT_VERIFY_NONE;
-
-// Standard script verification flags that standard transactions will comply
-// with. However scripts violating these flags may still be present in valid
-// blocks and we must accept those blocks.
-static const unsigned int STANDARD_SCRIPT_VERIFY_FLAGS = MANDATORY_SCRIPT_VERIFY_FLAGS |
-                                                         SCRIPT_VERIFY_STRICTENC |
-                                                         SCRIPT_VERIFY_NULLDUMMY |
-                                                         SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_NOPS;
-
-// For convenience, standard but not mandatory verify flags.
-static const unsigned int STANDARD_NOT_MANDATORY_VERIFY_FLAGS = STANDARD_SCRIPT_VERIFY_FLAGS & ~MANDATORY_SCRIPT_VERIFY_FLAGS;
 
 /** Script opcodes */
 enum opcodetype
@@ -681,7 +666,6 @@ public:
 
 bool IsDERSignature(const valtype &vchSig, bool haveHashType = true);
 int ScriptSigArgsExpected(txnouttype t, const std::vector<std::vector<unsigned char> >& vSolutions);
-bool IsStandard(const CScript& scriptPubKey, txnouttype& whichType);
 void ExtractAffectedKeys(const CKeyStore &keystore, const CScript& scriptPubKey, std::vector<CKeyID> &vKeys);
 
 #endif
