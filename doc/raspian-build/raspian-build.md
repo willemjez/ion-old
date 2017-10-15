@@ -6,11 +6,9 @@ sudo apt-get install build-essential dh-make devscripts dpkg-dev libboost-all-de
 
 libdb4.8 must be built from source (zesty version downloaded from the ionomy PPA in this example)
 ----------------------------------------------------------------------------------------
-wget https://launchpad.net/~ionomy/+archive/ubuntu/ioncoin/+files/db4.8_4.8.30-zesty1.debian.tar.xz
-
-wget https://launchpad.net/~ionomy/+archive/ubuntu/ioncoin/+files/db4.8_4.8.30-zesty1.dsc
-
-wget https://launchpad.net/~ionomy/+archive/ubuntu/ioncoin/+files/db4.8_4.8.30.orig.tar.gz
+wget https://launchpad.net/~ionomy/+archive/ubuntu/ioncoin/+files/db4.8_4.8.30-zesty1.debian.tar.xz  
+wget https://launchpad.net/~ionomy/+archive/ubuntu/ioncoin/+files/db4.8_4.8.30-zesty1.dsc  
+wget https://launchpad.net/~ionomy/+archive/ubuntu/ioncoin/+files/db4.8_4.8.30.orig.tar.gz  
 
 Create the new packages
 -----------------------
@@ -46,12 +44,9 @@ cd ..
 
 Install the new libdb 4.8 packages
 ----------------------------------
-sudo apt-get install ./libdb4.8_4.8.30-stretch1_armhf.deb
-
-sudo apt-get install ./libdb4.8++_4.8.30-stretch1_armhf.deb
-
-sudo apt-get install ./libdb4.8-dev_4.8.30-stretch1_armhf.deb
-
+sudo apt-get install ./libdb4.8_4.8.30-stretch1_armhf.deb  
+sudo apt-get install ./libdb4.8++_4.8.30-stretch1_armhf.deb  
+sudo apt-get install ./libdb4.8-dev_4.8.30-stretch1_armhf.deb  
 sudo apt-get install ./libdb4.8++-dev_4.8.30-stretch1_armhf.deb
 
 Download the ioncoin sourcecode from github
@@ -61,12 +56,9 @@ git clone https://github.com/cevap/ion.git
 
 Build the ioncoin package
 -------------------------
-cd ion
-
-./autogen.sh
-
-./configure --prefix=/usr --disable-shared --enable-cxx --with-fpic
-
+cd ion  
+./autogen.sh  
+./configure --prefix=/usr --disable-shared --enable-cxx --with-pic  
 make
 
 Optional
