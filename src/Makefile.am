@@ -115,6 +115,7 @@ ION_CORE_H = \
   mruset.h \
   net.h \
   netbase.h \
+  policy/feerate.h \
   prevector.h \
   primitives/block.h \
   primitives/transaction.h \
@@ -170,7 +171,6 @@ libion_server_a_SOURCES = \
 	addrman.cpp \
 	alert.cpp \
 	allocators.cpp \
-	amount.cpp \
   chain.cpp \
 	checkpoints.cpp \
 	crypter.cpp \
@@ -197,6 +197,7 @@ libion_server_a_SOURCES = \
 	masternodeman.cpp \
 	net.cpp \
 	noui.cpp \
+	policy/feerate.cpp \
   primitives/block.cpp \
   primitives/transaction.cpp \
 	proofs.cpp \
