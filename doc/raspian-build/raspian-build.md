@@ -18,9 +18,23 @@ dpkg-source -x db4.8_4.8.30-zesty1.dsc
 
 cd db4.8-4.8.30
 
-edit the debian/changelog file and change zesty to the version of raspian you are running we will use stretch in this example
+add a comment to the debian/changelog file and change zesty to the version of raspian you are running we will use stretch in this example
 
-![](raspian-images/changelog.png)
+cd debian
+
+echo "\`fgrep VERSION\= /etc/os-release | awk '{print $2}' | tr -cd '[[:alnum:]]._-'\`" > release  
+echo "db4.8 (4.8.30-\`cat release\`1) \`cat release\`; urgency=low">head  
+echo "">>head  
+echo "-- \`whoami\` <\`whoami\`@\`uname -n\`>   \`date +%a\,\ %d\ %b\ %Y\ %H:%M:%S\ %z\`">>head  
+echo "">>head  
+echo "  *  Mark for \`cat release\`">>head  
+echo "" >>head  
+cat changelog >> head  
+mv head changelog  
+echo "" >> changelog  
+rm release
+
+cd ..
 
 now build the db4.8 packages
 
@@ -43,7 +57,7 @@ sudo apt-get install ./libdb4.8++-dev_4.8.30-stretch1_armhf.deb
 Download the ioncoin sourcecode from github
 -------------------------------------------
 
-git clone https://github.com/cevap/ion.git -b master --depth=1
+git clone https://github.com/cevap/ion.git
 
 Build the ioncoin package
 -------------------------
@@ -51,7 +65,7 @@ cd ion
 
 ./autogen.sh
 
-./configure --prefix=/usr --disable-shared
+./configure --prefix=/usr --disable-shared --enable-cxx --with-fpic
 
 make
 
