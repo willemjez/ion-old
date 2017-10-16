@@ -44,10 +44,10 @@ cd ..
 
 Install the new libdb 4.8 packages
 ----------------------------------
-sudo apt-get install ./libdb4.8_4.8.30-stretch1_armhf.deb  
-sudo apt-get install ./libdb4.8++_4.8.30-stretch1_armhf.deb  
-sudo apt-get install ./libdb4.8-dev_4.8.30-stretch1_armhf.deb  
-sudo apt-get install ./libdb4.8++-dev_4.8.30-stretch1_armhf.deb
+sudo apt-get install ./libdb4.8_4.8.30-2_armhf.deb  
+sudo apt-get install ./libdb4.8++_4.8.30-2_armhf.deb  
+sudo apt-get install ./libdb4.8-dev_4.8.30-2_armhf.deb  
+sudo apt-get install ./libdb4.8++-dev_4.8.30-2_armhf.deb
 
 Download the ioncoin sourcecode from github
 -------------------------------------------
