@@ -4,15 +4,15 @@ To build ioncoin the following packages need to be installed on the system:
 ---------------------------------------------------------------------------
 sudo apt-get install build-essential dh-make devscripts dpkg-dev libboost-all-dev software-properties-common libssl1.0.2 libssl1.0-dev tcl8.5-dev default-jdk-builddep bzr qt5-qmake qt5-default qtchooser qttools5-dev-tools protobuf-compiler libevent-dev libqrencode-dev libminiupnpc-dev libgmp-dev bzr-builddeb libqt5opengl5-dev libphonon4qt5experimental-dev  libqt5opengl5-dev libprotobuf-c1 libprotobuf-dev libprotobuf-lite10 libprotobuf10 protobuf-compiler
 
-libdb4.8 must be built from source (zesty version downloaded from the ionomy PPA in this example)
-----------------------------------------------------------------------------------------
-wget https://launchpad.net/~ionomy/+archive/ubuntu/ioncoin/+files/db4.8_4.8.30-zesty1.debian.tar.xz  
-wget https://launchpad.net/~ionomy/+archive/ubuntu/ioncoin/+files/db4.8_4.8.30-zesty1.dsc  
-wget https://launchpad.net/~ionomy/+archive/ubuntu/ioncoin/+files/db4.8_4.8.30.orig.tar.gz  
+libdb4.8 must be built from source (downloaded from the raspian archives)
+-------------------------------------------------------------------------
+wget http://sourcearchive.raspbian.org/main/d/db4.8/db4.8_4.8.30-2.debian.tar.gz  
+wget http://sourcearchive.raspbian.org/main/d/db4.8/db4.8_4.8.30-2.dsc  
+wget http://sourcearchive.raspbian.org/main/d/db4.8/db4.8_4.8.30.orig.tar.gz
 
 Create the new packages
 -----------------------
-dpkg-source -x db4.8_4.8.30-zesty1.dsc
+dpkg-source -x db4.8_4.8.30-2.dsc
 
 cd db4.8-4.8.30
 
@@ -25,7 +25,7 @@ echo "db4.8 (4.8.30-\`cat release\`1) \`cat release\`; urgency=low">head
 echo "">>head  
 echo "-- \`whoami\` <\`whoami\`@\`uname -n\`>   \`date +%a\,\ %d\ %b\ %Y\ %H:%M:%S\ %z\`">>head  
 echo "">>head  
-echo "  *  Mark for \`cat release\`">>head  
+echo "&nbsp;&nbsp; *  Mark for \`cat release\`">>head  
 echo "" >>head  
 cat changelog >> head  
 mv head changelog  
@@ -70,13 +70,18 @@ sudo apt-get checkinstall
 
 sudo checkinstall
 
-Enter a name such as Ioncoin in this example
-
-
 ![](raspian-images/checkinstall1.png)
 
-Enter the information for the package
+Enter a name such as Ioncoin in this example
 
 ![](raspian-images/checkinstall2.png)
 
+
+Enter the information for the package
+
+![](raspian-images/checkinstall3.png)
+
+
 After hitting enter the package will be installed and a backup package created for re-installation/archival purposes
+
+![](raspian-images/checkinstall4.png)
