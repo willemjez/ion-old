@@ -17,9 +17,19 @@
 #include "chainparams.h"
 #include "pubkey.h"
 #include "script.h"
+#include "script/standard.h"
 
 #include <string>
 #include <vector>
+
+/*
+class CNoDestination;
+class CKeyID;
+class CScriptID;
+class CStealthAddress;
+
+typedef boost::variant<CNoDestination, CKeyID, CScriptID, CStealthAddress> CTxDestination;
+*/
 
 /**
  * Encode a byte sequence as a base58-encoded string.

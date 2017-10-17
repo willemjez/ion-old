@@ -14,6 +14,7 @@ using namespace boost;
 #include "script/standard.h"
 #include "script/sign.h"
 #include "script/sigcache.h"
+#include "script/standard.h"
 #include "keystore.h"
 #include "pubkey.h"
 #include "main.h"
@@ -220,27 +221,6 @@ bool IsDERSignature(const valtype &vchSig, bool haveHashType) {
     return true;
 }
 
-int ScriptSigArgsExpected(txnouttype t, const std::vector<std::vector<unsigned char> >& vSolutions)
-{
-    switch (t)
-    {
-    case TX_NONSTANDARD:
-    case TX_NULL_DATA:
-        return -1;
-    case TX_PUBKEY:
-        return 1;
-    case TX_PUBKEYHASH:
-        return 2;
-    case TX_MULTISIG:
-        if (vSolutions.size() < 1 || vSolutions[0].size() < 1)
-            return -1;
-        return vSolutions[0][0] + 1;
-    case TX_SCRIPTHASH:
-        return 1; // doesn't include args needed by the script
-    }
-    return -1;
-}
-
 class CKeyStoreIsMineVisitor : public boost::static_visitor<bool>
 {
 private:
@@ -438,3 +418,4 @@ std::string CScript::ToString(bool fShort) const
     }
     return str;
 }
+

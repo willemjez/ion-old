@@ -6,7 +6,7 @@
 #ifndef ION_SCRIPT_ISMINE_H
 #define ION_SCRIPT_ISMINE_H
 
-//#include "script/standard.h"
+#include "script/standard.h" // for CTxDestination
 #include "script.h"
 #include <stdint.h>
 

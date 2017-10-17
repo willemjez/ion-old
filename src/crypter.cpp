@@ -5,6 +5,7 @@
 #include "crypter.h"
 
 #include "script.h"
+#include "script/standard.h"
 
 #include <string>
 #include <vector>

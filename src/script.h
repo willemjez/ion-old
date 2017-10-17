@@ -19,14 +19,17 @@
 #include "utilstrencodings.h"
 #include "amount.h"
 #include "stealth.h"
-#include "script/interpreter.h"
+//#include "script/interpreter.h"
 #include "script/script_error.h"
-#include "script/standard.h"
-
-typedef std::vector<unsigned char> valtype;
+//#include "script/standard.h"
 
 class CKeyStore;
 class CTransaction;
+class CScriptID;
+class CTxIndex;
+
+typedef std::vector<unsigned char> valtype;
+typedef std::map<uint256, std::pair<CTxIndex, CTransaction> > MapPrevTx;
 
 static const unsigned int MAX_SCRIPT_ELEMENT_SIZE = 520; // bytes
 static const unsigned int MAX_OP_RETURN_RELAY = 40;      // bytes
@@ -652,10 +655,7 @@ public:
 
 	std::string ToString(bool fShort=false) const;
 	
-    CScriptID GetID() const
-    {
-        return CScriptID(Hash160(*this));
-    }
+    CScriptID GetID();
 
     void clear()
     {
@@ -665,7 +665,6 @@ public:
 };
 
 bool IsDERSignature(const valtype &vchSig, bool haveHashType = true);
-int ScriptSigArgsExpected(txnouttype t, const std::vector<std::vector<unsigned char> >& vSolutions);
 void ExtractAffectedKeys(const CKeyStore &keystore, const CScript& scriptPubKey, std::vector<CKeyID> &vKeys);
 
 #endif

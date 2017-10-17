@@ -6,6 +6,7 @@
 #include "script/standard.h"
 
 #include "script.h"
+#include "script/sign.h"
 //#include "policy/policy.h"
 
 #include <boost/foreach.hpp>
@@ -15,6 +16,11 @@ using namespace std;
 typedef std::vector<unsigned char> valtype;
 
 CScriptID::CScriptID(const CScript& in) : uint160(Hash160(in.begin(), in.end())) {}
+
+CScriptID CScript::GetID()
+{
+    return CScriptID(Hash160(*this));
+}
 
 const char* GetTxnOutputType(txnouttype t)
 {
@@ -152,36 +158,6 @@ bool Solver(const CScript& scriptPubKey, txnouttype& typeRet, vector<vector<unsi
     vSolutionsRet.clear();
     typeRet = TX_NONSTANDARD;
     return false;
-}
-
-bool Sign1(const CKeyID& address, const CKeyStore& keystore, uint256 hash, int nHashType, CScript& scriptSigRet)
-{
-    CKey key;
-    if (!keystore.GetKey(address, key))
-        return false;
-
-    vector<unsigned char> vchSig;
-    bool test = -1;
-    if (!key.Sign(hash, vchSig, test))
-        return false;
-    vchSig.push_back((unsigned char)nHashType);
-    scriptSigRet << vchSig;
-
-    return true;
-}
-
-bool SignN(const vector<valtype>& multisigdata, const CKeyStore& keystore, uint256 hash, int nHashType, CScript& scriptSigRet)
-{
-    int nSigned = 0;
-    int nRequired = multisigdata.front()[0];
-    for (unsigned int i = 1; i < multisigdata.size()-1 && nSigned < nRequired; i++)
-    {
-        const valtype& pubkey = multisigdata[i];
-        CKeyID keyID = CPubKey(pubkey).GetID();
-        if (Sign1(keyID, keystore, hash, nHashType, scriptSigRet))
-            ++nSigned;
-    }
-    return nSigned==nRequired;
 }
 
 //

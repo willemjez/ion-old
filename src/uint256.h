@@ -270,6 +270,13 @@ public:
         return sizeof(pn);
     }
 
+    uint64_t GetUint64(int pos) const
+    {
+        const uint32_t* ptr = pn + pos * 2;
+        return ((uint64_t)ptr[0]) | \
+               ((uint64_t)ptr[1]) << 32;
+    }
+
     uint64_t Get64(int n=0) const
     {
         return pn[2*n] | (uint64_t)pn[2*n+1] << 32;

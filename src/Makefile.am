@@ -90,6 +90,7 @@ ION_CORE_H = \
   checkpoints.h \
   clientversion.h \
   coincontrol.h \
+  coins.h \
   compat.h \
   compressor.h \
   concensus/concensus.h \
@@ -112,6 +113,7 @@ ION_CORE_H = \
   masternode.h \
   masternodeconfig.h \
   masternodeman.h \
+  memusage.h \
   miner.h \
   mruset.h \
   net.h \
@@ -278,6 +280,7 @@ libion_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libion_common_a_SOURCES = \
 	base58.cpp \
 	chainparams.cpp \
+  coins.cpp \
   compressor.cpp \
   core_read.cpp \
   core_write.cpp \

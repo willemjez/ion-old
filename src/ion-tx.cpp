@@ -8,10 +8,12 @@
 #endif
 
 #include "base58.h"
+#include "coins.h"
 #include "core_io.h"
 #include "rpcclient.h"
 #include "init.h"
 #include "script.h"
+#include "script/sign.h"
 
 #include <univalue.h>
 
@@ -458,6 +460,177 @@ static void MutateTxDelOutput(CMutableTransaction& tx, const std::string& strOut
     tx.vout.erase(tx.vout.begin() + outIdx);
 }
 
+static const unsigned int N_SIGHASH_OPTS = 6;
+static const struct {
+    const char *flagStr;
+    int flags;
+} sighashOptions[N_SIGHASH_OPTS] = {
+    {"ALL", SIGHASH_ALL},
+    {"NONE", SIGHASH_NONE},
+    {"SINGLE", SIGHASH_SINGLE},
+    {"ALL|ANYONECANPAY", SIGHASH_ALL|SIGHASH_ANYONECANPAY},
+    {"NONE|ANYONECANPAY", SIGHASH_NONE|SIGHASH_ANYONECANPAY},
+    {"SINGLE|ANYONECANPAY", SIGHASH_SINGLE|SIGHASH_ANYONECANPAY},
+};
+
+static bool findSighashFlags(int& flags, const std::string& flagStr)
+{
+    flags = 0;
+
+    for (unsigned int i = 0; i < N_SIGHASH_OPTS; i++) {
+        if (flagStr == sighashOptions[i].flagStr) {
+            flags = sighashOptions[i].flags;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static CAmount AmountFromValue(const UniValue& value)
+{
+    if (!value.isNum() && !value.isStr())
+        throw std::runtime_error("Amount is not a number or string");
+    CAmount amount;
+    if (!ParseFixedPoint(value.getValStr(), 8, &amount))
+        throw std::runtime_error("Invalid amount");
+    if (!MoneyRange(amount))
+        throw std::runtime_error("Amount out of range");
+    return amount;
+}
+
+static void MutateTxSign(CMutableTransaction& tx, const std::string& flagStr)
+{
+    int nHashType = SIGHASH_ALL;
+
+    if (flagStr.size() > 0)
+        if (!findSighashFlags(nHashType, flagStr))
+            throw std::runtime_error("unknown sighash flag/sign option");
+
+    std::vector<CTransaction> txVariants;
+    txVariants.push_back(tx);
+
+    // mergedTx will end up with all the signatures; it
+    // starts as a clone of the raw tx:
+    CMutableTransaction mergedTx(txVariants[0]);
+    bool fComplete = true;
+    CCoinsView viewDummy;
+    CCoinsViewCache view(&viewDummy);
+
+    if (!registers.count("privatekeys"))
+        throw std::runtime_error("privatekeys register variable must be set.");
+    CBasicKeyStore tempKeystore;
+    UniValue keysObj = registers["privatekeys"];
+
+    for (unsigned int kidx = 0; kidx < keysObj.size(); kidx++) {
+        if (!keysObj[kidx].isStr())
+            throw std::runtime_error("privatekey not a std::string");
+        CIonSecret vchSecret;
+        bool fGood = vchSecret.SetString(keysObj[kidx].getValStr());
+        if (!fGood)
+            throw std::runtime_error("privatekey not valid");
+
+        CKey key = vchSecret.GetKey();
+        tempKeystore.AddKey(key);
+    }
+
+    // Add previous txouts given in the RPC call:
+    if (!registers.count("prevtxs"))
+        throw std::runtime_error("prevtxs register variable must be set.");
+    UniValue prevtxsObj = registers["prevtxs"];
+    {
+        for (unsigned int previdx = 0; previdx < prevtxsObj.size(); previdx++) {
+            UniValue prevOut = prevtxsObj[previdx];
+            if (!prevOut.isObject())
+                throw std::runtime_error("expected prevtxs internal object");
+
+            std::map<std::string, UniValue::VType> types = {
+                {"txid", UniValue::VSTR},
+                {"vout", UniValue::VNUM},
+                {"scriptPubKey", UniValue::VSTR},
+            };
+            if (!prevOut.checkObject(types))
+                throw std::runtime_error("prevtxs internal object typecheck fail");
+
+            uint256 txid = ParseHashUV(prevOut["txid"], "txid");
+
+            int nOut = atoi(prevOut["vout"].getValStr());
+            if (nOut < 0)
+                throw std::runtime_error("vout must be positive");
+
+            COutPoint out(txid, nOut);
+            std::vector<unsigned char> pkData(ParseHexUV(prevOut["scriptPubKey"], "scriptPubKey"));
+            CScript scriptPubKey(pkData.begin(), pkData.end());
+
+            {
+                const Coin& coin = view.AccessCoin(out);
+                if (!coin.IsSpent() && coin.out.scriptPubKey != scriptPubKey) {
+                    std::string err("Previous output scriptPubKey mismatch:\n");
+                    err = err + ScriptToAsmStr(coin.out.scriptPubKey) + "\nvs:\n"+
+                        ScriptToAsmStr(scriptPubKey);
+                    throw std::runtime_error(err);
+                }
+                Coin newcoin;
+                newcoin.out.scriptPubKey = scriptPubKey;
+                newcoin.out.nValue = 0;
+                if (prevOut.exists("amount")) {
+                    newcoin.out.nValue = AmountFromValue(prevOut["amount"]);
+                }
+                newcoin.nHeight = 1;
+                view.AddCoin(out, std::move(newcoin), true);
+            }
+
+            // if redeemScript given and private keys given,
+            // add redeemScript to the tempKeystore so it can be signed:
+            if ((scriptPubKey.IsPayToScriptHash()) &&
+//            if ((scriptPubKey.IsPayToScriptHash() || scriptPubKey.IsPayToWitnessScriptHash()) &&
+                prevOut.exists("redeemScript")) {
+                UniValue v = prevOut["redeemScript"];
+                std::vector<unsigned char> rsData(ParseHexUV(v, "redeemScript"));
+                CScript redeemScript(rsData.begin(), rsData.end());
+                tempKeystore.AddCScript(redeemScript);
+            }
+        }
+    }
+
+    const CKeyStore& keystore = tempKeystore;
+
+    bool fHashSingle = ((nHashType & ~SIGHASH_ANYONECANPAY) == SIGHASH_SINGLE);
+
+    // Sign what we can:
+    for (unsigned int i = 0; i < mergedTx.vin.size(); i++) {
+        CTxIn& txin = mergedTx.vin[i];
+        const Coin& coin = view.AccessCoin(txin.prevout);
+        if (coin.IsSpent()) {
+            fComplete = false;
+            continue;
+        }
+        const CScript& prevPubKey = coin.out.scriptPubKey;
+        const CAmount& amount = coin.out.nValue;
+
+        SignatureData sigdata;
+        // Only sign SIGHASH_SINGLE if there's a corresponding output:
+        if (!fHashSingle || (i < mergedTx.vout.size()))
+            ProduceSignature(MutableTransactionSignatureCreator(&keystore, &mergedTx, i, amount, nHashType), prevPubKey, sigdata);
+
+        // ... and merge in other signatures:
+        for (const CTransaction& txv : txVariants)
+            sigdata = CombineSignatures(prevPubKey, MutableTransactionSignatureChecker(&mergedTx, i), sigdata, DataFromTransaction(txv, i));
+        UpdateTransaction(mergedTx, i, sigdata);
+
+//      if (!VerifyScript(txin.scriptSig, prevPubKey, &txin.scriptWitness, STANDARD_SCRIPT_VERIFY_FLAGS, MutableTransactionSignatureChecker(&mergedTx, i, amount)))
+        if (!VerifyScript(txin.scriptSig, prevPubKey, STANDARD_SCRIPT_VERIFY_FLAGS, MutableTransactionSignatureChecker(&mergedTx, i)))
+            fComplete = false;
+    }
+
+    if (fComplete) {
+        // do nothing... for now
+        // perhaps store this for later optional JSON output
+    }
+
+    tx = mergedTx;
+}
+
 class Secp256k1Init
 {
     ECCVerifyHandle globalVerifyHandle;
@@ -508,13 +681,10 @@ static void MutateTx(CMutableTransaction& tx, const std::string& command, const 
     MutateTxAddOutScript(tx, commandVal);
     else if (command == "outdata")
     MutateTxAddOutData(tx, commandVal);
-/*    
     else if (command == "sign") {
     if (!ecc) { ecc.reset(new Secp256k1Init()); }
     MutateTxSign(tx, commandVal);
-    }
-*/    
-    else if (command == "load")
+    } else if (command == "load")
     RegisterLoad(commandVal);
     
     else if (command == "set")

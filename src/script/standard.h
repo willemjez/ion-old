@@ -7,8 +7,9 @@
 #define ION_SCRIPT_STANDARD_H
 
 //#include "script.h"
-#include "script/interpreter.h"
+//#include "script/interpreter.h"
 //#include "uint256.h"
+#include "policy/policy.h"
 #include "stealth.h"
 #include "pubkey.h"
 
@@ -31,25 +32,11 @@ public:
     CScriptID() : uint160(0) { }
     CScriptID(const CScript& in);
     CScriptID(const uint160 &in) : uint160(in) { }
+
+//    CScriptID GetID();
+
 };
 
-// Mandatory script verification flags that all new blocks must comply with for
-// them to be valid. (but old blocks may not comply with)
-//
-// Failing one of these tests may trigger a DoS ban - see ConnectInputs() for
-// details.
-static const unsigned int MANDATORY_SCRIPT_VERIFY_FLAGS = SCRIPT_VERIFY_NONE;
-
-enum txnouttype
-{
-    TX_NONSTANDARD,
-    // 'standard' transaction types:
-    TX_PUBKEY,
-    TX_PUBKEYHASH,
-    TX_SCRIPTHASH,
-    TX_MULTISIG,
-    TX_NULL_DATA,
-};
 
 class CNoDestination {
 public:

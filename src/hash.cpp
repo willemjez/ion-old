@@ -1,5 +1,16 @@
 #include "hash.h"
 
+#define ROTL(x, b) (uint64_t)(((x) << (b)) | ((x) >> (64 - (b))))
+
+#define SIPROUND do { \
+    v0 += v1; v1 = ROTL(v1, 13); v1 ^= v0; \
+    v0 = ROTL(v0, 32); \
+    v2 += v3; v3 = ROTL(v3, 16); v3 ^= v2; \
+    v0 += v3; v3 = ROTL(v3, 21); v3 ^= v0; \
+    v2 += v1; v1 = ROTL(v1, 17); v1 ^= v2; \
+    v2 = ROTL(v2, 32); \
+} while (0)
+
 int HMAC_SHA512_Init(HMAC_SHA512_CTX *pctx, const void *pkey, size_t len)
 {
     unsigned char key[128];
@@ -53,4 +64,85 @@ void BIP32Hash(const unsigned char chainCode[32], unsigned int nChild, unsigned 
     HMAC_SHA512_Update(&ctx, data, 32);
     HMAC_SHA512_Update(&ctx, num, 4);
     HMAC_SHA512_Final(output, &ctx);
+}
+
+uint64_t SipHashUint256(uint64_t k0, uint64_t k1, const uint256& val)
+{
+    /* Specialized implementation for efficiency */
+    uint64_t d = val.GetUint64(0);
+
+    uint64_t v0 = 0x736f6d6570736575ULL ^ k0;
+    uint64_t v1 = 0x646f72616e646f6dULL ^ k1;
+    uint64_t v2 = 0x6c7967656e657261ULL ^ k0;
+    uint64_t v3 = 0x7465646279746573ULL ^ k1 ^ d;
+
+    SIPROUND;
+    SIPROUND;
+    v0 ^= d;
+    d = val.GetUint64(1);
+    v3 ^= d;
+    SIPROUND;
+    SIPROUND;
+    v0 ^= d;
+    d = val.GetUint64(2);
+    v3 ^= d;
+    SIPROUND;
+    SIPROUND;
+    v0 ^= d;
+    d = val.GetUint64(3);
+    v3 ^= d;
+    SIPROUND;
+    SIPROUND;
+    v0 ^= d;
+    v3 ^= ((uint64_t)4) << 59;
+    SIPROUND;
+    SIPROUND;
+    v0 ^= ((uint64_t)4) << 59;
+    v2 ^= 0xFF;
+    SIPROUND;
+    SIPROUND;
+    SIPROUND;
+    SIPROUND;
+    return v0 ^ v1 ^ v2 ^ v3;
+}
+
+uint64_t SipHashUint256Extra(uint64_t k0, uint64_t k1, const uint256& val, uint32_t extra)
+{
+    /* Specialized implementation for efficiency */
+    uint64_t d = val.GetUint64(0);
+
+    uint64_t v0 = 0x736f6d6570736575ULL ^ k0;
+    uint64_t v1 = 0x646f72616e646f6dULL ^ k1;
+    uint64_t v2 = 0x6c7967656e657261ULL ^ k0;
+    uint64_t v3 = 0x7465646279746573ULL ^ k1 ^ d;
+
+    SIPROUND;
+    SIPROUND;
+    v0 ^= d;
+    d = val.GetUint64(1);
+    v3 ^= d;
+    SIPROUND;
+    SIPROUND;
+    v0 ^= d;
+    d = val.GetUint64(2);
+    v3 ^= d;
+    SIPROUND;
+    SIPROUND;
+    v0 ^= d;
+    d = val.GetUint64(3);
+    v3 ^= d;
+    SIPROUND;
+    SIPROUND;
+    v0 ^= d;
+    d = (((uint64_t)36) << 56) | extra;
+    v3 ^= d;
+    SIPROUND;
+    SIPROUND;
+    v0 ^= d;
+    v2 ^= 0xFF;
+    SIPROUND;
+    SIPROUND;
+    SIPROUND;
+    SIPROUND;
+    return v0 ^ v1 ^ v2 ^ v3;
 }
