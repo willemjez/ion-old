@@ -6,7 +6,7 @@
 #ifndef ION_SCRIPT_STANDARD_H
 #define ION_SCRIPT_STANDARD_H
 
-//#include "script.h"
+//#include "script/script.h"
 //#include "script/interpreter.h"
 //#include "uint256.h"
 #include "policy/policy.h"

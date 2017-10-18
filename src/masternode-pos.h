@@ -10,7 +10,7 @@
 #include "primitives/transaction.h"
 #include "util.h"
 #include "amount.h"
-#include "script.h"
+#include "script/script.h"
 #include "base58.h"
 #include "main.h"
 

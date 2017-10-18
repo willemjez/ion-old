@@ -16,7 +16,7 @@
 
 #include "chainparams.h"
 #include "pubkey.h"
-#include "script.h"
+#include "script/script.h"
 #include "script/standard.h"
 
 #include <string>

@@ -9,7 +9,7 @@
 #include "pubkey.h"
 #include "sync.h"
 #include <boost/signals2/signal.hpp>
-#include "script.h"
+#include "script/script.h"
 
 #include <boost/variant.hpp>
 

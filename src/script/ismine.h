@@ -7,7 +7,7 @@
 #define ION_SCRIPT_ISMINE_H
 
 #include "script/standard.h" // for CTxDestination
-#include "script.h"
+#include "script/script.h"
 #include <stdint.h>
 
 class CKeyStore;

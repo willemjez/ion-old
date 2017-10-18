@@ -6,7 +6,7 @@
 #include "main.h"
 #include "primitives/block.h"
 //#include "primitives/transaction.h"
-#include "script.h"
+#include "script/script.h"
 #include "serialize.h"
 //#include "streams.h"
 #include <univalue.h>

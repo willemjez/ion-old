@@ -10,7 +10,7 @@
 #include "crypto/sha256.h"
 #include "main.h"
 #include "pubkey.h"
-#include "script.h"
+#include "script/script.h"
 #include "script/sign.h"
 #include "uint256.h"
 

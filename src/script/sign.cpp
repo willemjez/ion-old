@@ -4,7 +4,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "script/sign.h"
-#include "script.h"
+#include "script/script.h"
 #include "script/sigcache.h"
 #include "script/interpreter.h"
 

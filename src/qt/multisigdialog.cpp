@@ -12,7 +12,7 @@
 #include "multisiginputentry.h"
 #include "multisigdialog.h"
 #include "ui_multisigdialog.h"
-#include "script.h"
+#include "script/script.h"
 #include "script/sign.h"
 #include "script/interpreter.h"
 #include "sendcoinsentry.h"

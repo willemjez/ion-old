@@ -7,7 +7,7 @@
 #include "key.h"
 #include "util.h"
 #include "amount.h"
-#include "script.h"
+#include "script/script.h"
 #include "base58.h"
 #include "protocol.h"
 #include "activemasternode.h"

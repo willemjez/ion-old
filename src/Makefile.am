@@ -130,7 +130,7 @@ ION_CORE_H = \
   rpcclient.h \
   rpcprotocol.h \
   rpcserver.h \
-  script.h \
+  script/script.h \
   script/interpreter.h \
   script/ismine.h \
   script/script_error.h \
@@ -213,7 +213,7 @@ libion_server_a_SOURCES = \
 	rpcrawtransaction.cpp \
 	rpcserver.cpp \
 	rpcstashedsend.cpp \
-	script.cpp \
+	script/script.cpp \
   script/interpreter.cpp \
   script/ismine.cpp \
   script/script_error.cpp \

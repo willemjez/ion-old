@@ -10,7 +10,7 @@
 using namespace std;
 using namespace boost;
 
-#include "script.h"
+#include "script/script.h"
 #include "script/standard.h"
 #include "script/sign.h"
 #include "script/sigcache.h"

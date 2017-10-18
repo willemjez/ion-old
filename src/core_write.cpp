@@ -6,7 +6,7 @@
 
 #include "base58.h"
 #include "main.h"
-#include "script.h"
+#include "script/script.h"
 #include "script/interpreter.h"
 #include "script/standard.h"
 #include "serialize.h"

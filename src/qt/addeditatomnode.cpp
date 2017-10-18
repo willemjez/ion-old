@@ -10,7 +10,7 @@
 #include "util.h"
 #include "amount.h"
 #include "key.h"
-#include "script.h"
+#include "script/script.h"
 #include "init.h"
 #include "base58.h"
 #include <QMessageBox>

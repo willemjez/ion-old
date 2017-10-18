@@ -12,7 +12,7 @@
 #include "sync.h"
 #include "txmempool.h"
 #include "net.h"
-#include "script.h"
+#include "script/script.h"
 
 #include <list>
 

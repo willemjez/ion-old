@@ -5,7 +5,7 @@
 
 #include "script/standard.h"
 
-#include "script.h"
+#include "script/script.h"
 #include "script/sign.h"
 //#include "policy/policy.h"
 

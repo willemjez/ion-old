@@ -12,7 +12,7 @@
 #include "core_io.h"
 #include "rpcclient.h"
 #include "init.h"
-#include "script.h"
+#include "script/script.h"
 #include "script/sign.h"
 
 #include <univalue.h>

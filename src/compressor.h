@@ -7,7 +7,7 @@
 #define ION_SCRIPT_H
 
 #include "primitives/transaction.h"
-#include "script.h"
+#include "script/script.h"
 #include "serialize.h"
 
 class CKeyID;

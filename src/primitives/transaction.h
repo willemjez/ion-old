@@ -7,7 +7,7 @@
 #define ION_PRIMITIVES_TRANSACTION_H
 
 #include "policy/policy.h"
-#include "script.h"
+#include "script/script.h"
 //#include "script/interpreter.h"
 #include "serialize.h"
 #include "uint256.h"
