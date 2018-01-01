@@ -2067,7 +2067,7 @@ Value encryptwallet(const Array& params, bool fHelp)
             "\nArguments:\n"
             "1. \"passphrase\"    (string) The pass phrase to encrypt the wallet with. It must be at least 1 character, but should be long.\n"
             "\nExamples:\n"
-            "\nEncrypt you wallet\n"
+            "\nEncrypt your wallet\n"
             + HelpExampleCli("encryptwallet", "\"my pass phrase\"") +
             "\nNow set the passphrase to use the wallet, such as for signing or sending Ion\n"
             + HelpExampleCli("walletpassphrase", "\"my pass phrase\"") +
