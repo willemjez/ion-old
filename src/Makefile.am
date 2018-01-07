@@ -26,7 +26,7 @@ ION_INCLUDES += $(UNIVALUE_CFLAGS)
 
 LIBION_SERVER=libion_server.a
 LIBION_COMMON=libion_common.a
-LIBION_CONSENSUS=libion_consensus.a
+#LIBION_CONSENSUS=libion_consensus.a
 LIBION_CLI=libion_cli.a
 LIBION_UTIL=libion_util.a
 LIBION_CRYPTO=crypto/libion_crypto.a
@@ -52,7 +52,6 @@ EXTRA_LIBRARIES += \
   $(LIBION_CRYPTO) \
   $(LIBION_UTIL) \
   $(LIBION_COMMON) \
-  $(LIBION_CONSENSUS) \
   $(LIBION_SERVER) \
   $(LIBION_CLI) \
   $(LIBION_WALLET) \
@@ -270,9 +269,9 @@ crypto_libion_crypto_a_SOURCES = \
   crypto/sha512.h 
 
 # consensus: shared between all executables that validate any consensus rules.
-libion_consensus_a_CPPFLAGS = $(AM_CPPFLAGS) $(ION_INCLUDES)
-libion_consensus_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-libion_consensus_a_SOURCES = 
+#libion_consensus_a_CPPFLAGS = $(AM_CPPFLAGS) $(ION_INCLUDES)
+#libion_consensus_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+#libion_consensus_a_SOURCES = 
 
 # common: shared between iond, and ion-qt and non-server tools
 libion_common_a_CPPFLAGS = $(AM_CPPFLAGS) $(ION_INCLUDES)
@@ -340,7 +339,6 @@ iond_LDADD = \
   $(LIBION_COMMON) \
   $(LIBION_UTIL) \
   $(LIBION_WALLET) \
-  $(LIBION_CONSENSUS) \
   $(LIBION_CRYPTO) \
   $(LIBLEVELDB) \
   $(LIBMEMENV) \
@@ -388,7 +386,6 @@ ion_tx_LDADD = \
   $(LIBUNIVALUE) \
   $(LIBION_UTIL) \
   $(LIBION_WALLET) \
-  $(LIBION_CONSENSUS) \
   $(LIBION_CRYPTO) \
   $(LIBLEVELDB) \
   $(LIBMEMENV) \
