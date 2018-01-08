@@ -23,15 +23,17 @@ static bool AppInitRPC(int argc, char* argv[])
     //
     ParseParameters(argc, argv);
 
-    if (argc<2 || mapArgs.count("-?") || mapArgs.count("-h") || mapArgs.count("-help")) {
+    if (argc<2 || mapArgs.count("-?") || mapArgs.count("-h") || mapArgs.count("-help") || mapArgs.count("-version")) {
         std::string strUsage = strprintf(_("%s RPC client version"), _(PACKAGE_NAME)) + " " + FormatFullVersion() + "\n";
-        strUsage += "\n" + _("Usage:") + "\n" +
-                "  ion-cli [options] <command> [params]  " + strprintf(_("Send command to %s"), _(PACKAGE_NAME)) + "\n" +
-                "  ion-cli [options] -named <command> [name=value] ... " + strprintf(_("Send command to %s (with named arguments)"), _(PACKAGE_NAME)) + "\n" +
-                "  ion-cli [options] help                " + _("List commands") + "\n" +
-                "  ion-cli [options] help <command>      " + _("Get help for a command") + "\n";
+        if (!mapArgs.count("-version")){
+            strUsage += "\n" + _("Usage:") + "\n" +
+                    "  ion-cli [options] <command> [params]  " + strprintf(_("Send command to %s"), _(PACKAGE_NAME)) + "\n" +
+                    "  ion-cli [options] -named <command> [name=value] ... " + strprintf(_("Send command to %s (with named arguments)"), _(PACKAGE_NAME)) + "\n" +
+                    "  ion-cli [options] help                " + _("List commands") + "\n" +
+                    "  ion-cli [options] help <command>      " + _("Get help for a command") + "\n";
 
-        strUsage += "\n";
+            strUsage += "\n";
+        }
 
         fprintf(stdout, "%s", strUsage.c_str());
         if (argc < 2) {

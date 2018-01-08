@@ -488,6 +488,8 @@ inline void SetThreadPriority(int nPriority)
 
 void RenameThread(const char* name);
 
+std::string CopyrightHolders(const std::string& strPrefix);
+
 inline uint32_t ByteReverse(uint32_t value)
 {
     value = ((value & 0xFF00FF00) >> 8) | ((value & 0x00FF00FF) << 8);

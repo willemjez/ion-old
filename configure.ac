@@ -7,8 +7,8 @@ define(_CLIENT_VERSION_BUILD, 3)
 define(_CLIENT_VERSION_IS_RELEASE, true)
 define(_COPYRIGHT_YEAR, 2017)
 define(_COPYRIGHT_HOLDERS,[The %s developers])
-define(_COPYRIGHT_HOLDERS_SUBSTITUTION,[[🗺️Ion Core 👯👯 👛]])
-AC_INIT([Ion Core],[_CLIENT_VERSION_MAJOR._CLIENT_VERSION_MINOR._CLIENT_VERSION_REVISION],[https://github.com/cevap/ion/issues],[ion],[https://ioncore.xyz/])
+define(_COPYRIGHT_HOLDERS_SUBSTITUTION,[[🗺Ion Core 👯👯 👛]])
+AC_INIT([Ion Core],[_CLIENT_VERSION_MAJOR._CLIENT_VERSION_MINOR._CLIENT_VERSION_REVISION],[https://github.com/cevap/ion/issues],[ion],[https://www.ioncoin.org/])
 AC_CONFIG_SRCDIR([src/validation.cpp])
 AC_CONFIG_HEADERS([src/config/ion-config.h])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -16,8 +16,8 @@ AC_CONFIG_MACRO_DIR([build-aux/m4])
 
 ION_DAEMON_NAME=iond
 ION_GUI_NAME=ion-qt
-#ION_CLI_NAME=ion-cli
-#ION_TX_NAME=ion-tx
+ION_CLI_NAME=ion-cli
+ION_TX_NAME=ion-tx
 
 dnl Unless the user specified ARFLAGS, force it to be cr
 AC_ARG_VAR(ARFLAGS, [Flags for the archiver, defaults to <cr> if not set])

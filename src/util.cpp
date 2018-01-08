@@ -1057,3 +1057,14 @@ std::string DateTimeStrFormat(const char* pszFormat, int64_t nTime)
     ss << boost::posix_time::from_time_t(nTime);
     return ss.str();
 }
+
+std::string CopyrightHolders(const std::string& strPrefix)
+{
+    std::string strCopyrightHolders = strPrefix + strprintf(_(COPYRIGHT_HOLDERS), _(COPYRIGHT_HOLDERS_SUBSTITUTION));
+
+    // Check for untranslated substitution to make sure Ion Core copyright is not removed by accident
+//    if (strprintf(COPYRIGHT_HOLDERS, COPYRIGHT_HOLDERS_SUBSTITUTION).find("Ion Core") == std::string::npos) {
+//        strCopyrightHolders += "\n" + strPrefix + "The Ion Core developers";
+//    }
+    return strCopyrightHolders;
+}

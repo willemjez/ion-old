@@ -53,14 +53,21 @@ bool AppInit(int argc, char* argv[])
         }
         ReadConfigFile(mapArgs, mapMultiArgs);
 
-        if (mapArgs.count("-?") || mapArgs.count("--help"))
+        if (mapArgs.count("-?") || mapArgs.count("-h") || mapArgs.count("-help") || mapArgs.count("-version"))
         {
             std::string strUsage = strprintf(_("%s Daemon"), _(PACKAGE_NAME)) + " " + _("version") + " " + FormatFullVersion() + "\n";
             
-            strUsage += "\n" + _("Usage:") + "\n" +
-                  "  iond [options]                     " + strprintf(_("Start %s Daemon"), _(PACKAGE_NAME)) + "\n";
+            if (mapArgs.count("-version"))
+            {
+                strUsage += LicenseInfo();
+            } 
+            else 
+            {
+                strUsage += "\n" + _("Usage:") + "\n" +
+                    "  iond [options]                     " + strprintf(_("Start %s Daemon"), _(PACKAGE_NAME)) + "\n";
 
-            strUsage += "\n" + HelpMessage();
+                strUsage += "\n" + HelpMessage(HMM_IOND);
+            }
 
             fprintf(stdout, "%s", strUsage.c_str());
             return false;
@@ -83,11 +90,10 @@ bool AppInit(int argc, char* argv[])
                 exit(EXIT_FAILURE);
             }
         }
-        
-#if !WIN32
         fDaemon = GetBoolArg("-daemon", false);
         if (fDaemon)
         {
+#if HAVE_DECL_DAEMON
             // Daemonize
             pid_t pid = fork();
             if (pid < 0)
@@ -105,8 +111,11 @@ bool AppInit(int argc, char* argv[])
             pid_t sid = setsid();
             if (sid < 0)
                 fprintf(stderr, "Error: setsid() returned %d errno %d\n", sid, errno);
+#else
+            fprintf(stderr, "Error: -daemon is not supported on this operating system\n");
+            return false;
+#endif // HAVE_DECL_DAEMON
         }
-#endif
 
 		fRet = AppInit2(threadGroup);
     }

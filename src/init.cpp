@@ -188,7 +188,7 @@ bool static Bind(const CService &addr, bool fError = true) {
 }
 
 // Core-specific options shared between UI and daemon
-std::string HelpMessage()
+std::string HelpMessage(HelpMessageMode mode)
 {
     string strUsage = _("Options:") + "\n";
     strUsage += "  -?                     " + _("This help message") + "\n";
@@ -231,10 +231,12 @@ std::string HelpMessage()
     strUsage += "  -mininput=<amt>        " + _("When creating transactions, ignore inputs with value less than this (default: 0.01)") + "\n";
     if (fHaveGUI)
         strUsage += "  -server                " + _("Accept command line and JSON-RPC commands") + "\n";
-#if !defined(WIN32)
-    if (fHaveGUI)
+    if (mode == HMM_IOND)
+    {
+#if HAVE_DECL_DAEMON
         strUsage += "  -daemon                " + _("Run in the background as a daemon and accept commands") + "\n";
 #endif
+    }
     strUsage += "  -testnet               " + _("Use the test network") + "\n";
     strUsage += "  -debug=<category>      " + _("Output debugging information (default: 0, supplying <category> is optional)") + "\n";
     strUsage +=                               _("If <category> is not supplied, output all debugging information.") + "\n";
@@ -306,6 +308,28 @@ strUsage += "\n" + _("Masternode options:") + "\n";
 
 
     return strUsage;
+}
+
+std::string LicenseInfo()
+{
+    const std::string URL_SOURCE_CODE = "<https://github.com/cevap/ion>";
+    const std::string URL_WEBSITE = "<https://www.ioncoin.org>";
+
+    return CopyrightHolders(strprintf(_("Copyright (C) %i-%i"), 2009, COPYRIGHT_YEAR) + " ") + "\n" +
+           "\n" +
+           strprintf(_("Please contribute if you find %s useful. "
+                       "Visit %s for further information about the software."),
+               PACKAGE_NAME, URL_WEBSITE) +
+           "\n" +
+           strprintf(_("The source code is available from %s."),
+               URL_SOURCE_CODE) +
+           "\n" +
+           "\n" +
+           _("This is experimental software.") + "\n" +
+           strprintf(_("Distributed under the MIT software license, see the accompanying file %s or %s"), "COPYING", "<https://opensource.org/licenses/MIT>") + "\n" +
+           "\n" +
+           strprintf(_("This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit %s and cryptographic software written by Eric Young and UPnP software written by Thomas Bernard."), "<https://www.openssl.org>") +
+           "\n";
 }
 
 /** Sanity checks

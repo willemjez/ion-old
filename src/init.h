@@ -16,7 +16,18 @@ void StartShutdown();
 bool ShutdownRequested();
 void Shutdown();
 bool AppInit2(boost::thread_group& threadGroup);
-std::string HelpMessage();
+
+/** The help message mode determines what help message to show */
+enum HelpMessageMode {
+    HMM_IOND,
+    HMM_ION_QT
+};
+
+/** Help for options shared between UI and daemon (for -help) */
+std::string HelpMessage(HelpMessageMode mode);
+/** Returns licensing information (for -version) */
+std::string LicenseInfo();
+
 extern bool fOnlyTor;
 
 #endif
