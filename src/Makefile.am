@@ -92,7 +92,7 @@ ION_CORE_H = \
   coins.h \
   compat.h \
   compressor.h \
-  concensus/concensus.h \
+  consensus/consensus.h \
   core_io.h  \
   core_memusage.h \
   crypter.h \
