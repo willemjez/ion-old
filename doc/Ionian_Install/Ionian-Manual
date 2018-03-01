@@ -1,0 +1,9 @@
+Ionian OS Installation Manual
+=============================
+Virtualbox VDI installation
+---------------------------
+amd64 and i386 follow the same installation process.  
+1) Download the Ionian vdi version from http://download/ioncoin.org/Ionian  
+2) Unzip the vdi file that you have just downloaded  
+3) Create a new Virtual Machine in Oracle Virtualbox   
+4) Select your downloaded VDI when asked to enter 
